@@ -254,16 +254,21 @@ class LinkChecker:
             "Upgrade-Insecure-Requests": "1"
         }
 
+        # 确保Cookie通过Header显式发送（session.cookies域名匹配可能有边缘问题）
+        if self.cookie_str:
+            clean_cookie = "; ".join([f"{k}={v}" for k, v in self.cookies_dict.items()]) if self.cookies_dict else self.cookie_str
+            headers["Cookie"] = clean_cookie
+
         try:
             session = requests.Session()
             session.headers.update(headers)
             if proxies:
                 session.proxies = proxies
 
+            # 同时设置 session.cookies 以支持重定向时的域名匹配
             if self.cookies_dict:
                 for k, v in self.cookies_dict.items():
                     session.cookies.set(k, v, domain=".google.com")
-                    session.cookies.set(k, v, domain="one.google.com")
 
             response = session.get(url, timeout=self.timeout, allow_redirects=True)
             status_code = response.status_code
@@ -462,7 +467,7 @@ class LinkChecker:
             "free for 18 months"
         ]
         match_count = sum(1 for kw in active_keywords if kw in html)
-        if match_count >= 2:
+        if match_count >= 1:
             plan_info = "Jio 赠送 18个月 Google AI Pro (5TB + Gemini Pro)"
             deadline_str = f"（截止: {expire_deadline}）" if expire_deadline else ""
             return {
