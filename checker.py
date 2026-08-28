@@ -481,23 +481,42 @@ class LinkChecker:
                 "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
             }
 
-        # 6. 未知返回内容（带有 Google One 特征且最终URL仍在 Google 域名内）
-        if ("one.google.com" in final_url or "serviceactivation.google.com" in final_url) and ("Google One" in html or "one.google.com" in html):
-            return {
-                "raw_input": raw_input,
-                "token": token,
-                "url": url,
-                "status": STATUS_ACTIVE,
-                "status_label": STATUS_LABELS[STATUS_ACTIVE]["text"],
-                "status_badge": STATUS_LABELS[STATUS_ACTIVE]["badge"],
-                "details": "检测到 Google One 激活页面（可能有效，建议手动确认）",
-                "plan_info": "Google AI 方案",
-                "expire_deadline": expire_deadline or "-",
-                "remaining_time": remaining_time,
-                "plan_valid_until": "-",
-                "duration_ms": duration_ms,
-                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
-            }
+        # 6. 未知返回内容 — 最终URL仍在 Google 域名内（SPA页面可能无服务端关键词）
+        if "one.google.com" in final_url or "serviceactivation.google.com" in final_url:
+            # 如果HTML里有 Google One 相关内容，可能有效
+            if "Google One" in html or "one.google.com" in html or "google.com/activate" in html:
+                return {
+                    "raw_input": raw_input,
+                    "token": token,
+                    "url": url,
+                    "status": STATUS_ACTIVE,
+                    "status_label": STATUS_LABELS[STATUS_ACTIVE]["text"],
+                    "status_badge": STATUS_LABELS[STATUS_ACTIVE]["badge"],
+                    "details": "检测到 Google One 激活页面（可能有效，建议手动确认）",
+                    "plan_info": "Google AI 方案",
+                    "expire_deadline": expire_deadline or "-",
+                    "remaining_time": remaining_time,
+                    "plan_valid_until": "-",
+                    "duration_ms": duration_ms,
+                    "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+                }
+            else:
+                # URL在Google域名但HTML无法识别内容（可能是SPA/JS渲染页面）
+                return {
+                    "raw_input": raw_input,
+                    "token": token,
+                    "url": url,
+                    "status": STATUS_INVALID,
+                    "status_label": STATUS_LABELS[STATUS_INVALID]["text"],
+                    "status_badge": STATUS_LABELS[STATUS_INVALID]["badge"],
+                    "details": f"Google 页面无法识别有效激活内容（可能链接无效或页面由JS渲染，建议手动打开确认）",
+                    "plan_info": "待确认",
+                    "expire_deadline": "-",
+                    "remaining_time": "-",
+                    "plan_valid_until": "-",
+                    "duration_ms": duration_ms,
+                    "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+                }
 
         return {
             "raw_input": raw_input,
