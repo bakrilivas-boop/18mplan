@@ -1,0 +1,15 @@
+# 保护私有配置与Cookie不被泄露到公开仓库
+config.json
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 临时测试文件
+*.log
+test_resp.html
+test_resp_one.html
+debug_one_page.html
+test_debug.py

@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google One / Jio 18个月 AI Pro 激活链接活性批量检测工具</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        google: {
+                            blue: '#1a73e8',
+                            hover: '#1557b0',
+                            green: '#1e8e3e',
+                            red: '#d93025',
+                            yellow: '#f9ab00',
+                            bg: '#f8fafd'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafd;
+        }
+        .font-code {
+            font-family: 'JetBrains Mono', Consolas, monospace;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .row-active {
+            background-color: rgba(236, 253, 245, 0.85) !important;
+            border-left: 4px solid #10b981 !important;
+        }
+        .row-used {
+            background-color: rgba(254, 242, 242, 0.85) !important;
+            border-left: 4px solid #f43f5e !important;
+        }
+        .row-other {
+            background-color: rgba(255, 251, 235, 0.85) !important;
+            border-left: 4px solid #f59e0b !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col">
+
+    <!-- 顶部导航栏 -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center shadow-md text-white font-bold text-xl">
+                    1
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 leading-tight flex items-center space-x-2">
+                        <span>Google One 激活链接活性检测器</span>
+                        <span class="text-xs px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 font-semibold">带时效倒计时</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 font-medium">Jio 18个月 Google AI Pro (5TB + Gemini Pro) 专属批量检测</p>
+                </div>
+            </div>
+
+            <!-- 右侧快捷状态与设置 -->
+            <div class="flex items-center space-x-3">
+                <div id="cookieBadge" class="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                    <span id="cookieBadgeText">正在检查Cookie...</span>
+                </div>
+                
+                <button onclick="openHelpModal()" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg transition duration-150 flex items-center space-x-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Cookie获取教程</span>
+                </button>
+
+                <button onclick="openSettingsModal()" class="px-3.5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition duration-150 flex items-center space-x-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span>配置中心</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体区域 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1 w-full">
+        
+        <!-- 统计看板 -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div class="glass-card p-4 rounded-xl shadow-sm border border-slate-200">
+                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">总检测链接</div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <div id="statTotal" class="text-2xl font-bold text-slate-900">0</div>
+                    <span class="text-xs text-slate-400">个任务</span>
+                </div>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl shadow-sm border-l-4 border-l-emerald-500 border-slate-200 bg-emerald-50/20">
+                <div class="text-xs font-semibold text-emerald-700 uppercase tracking-wider flex items-center justify-between">
+                    <span>🟢 有效未激活</span>
+                    <span id="rateActive" class="text-xs font-normal">0%</span>
+                </div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <div id="statActive" class="text-2xl font-bold text-emerald-600">0</div>
+                    <span class="text-xs text-emerald-600 font-medium">可免费畅享 18个月</span>
+                </div>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl shadow-sm border-l-4 border-l-rose-500 border-slate-200 bg-rose-50/20">
+                <div class="text-xs font-semibold text-rose-700 uppercase tracking-wider flex items-center justify-between">
+                    <span>🔴 已失效 (已使用)</span>
+                    <span id="rateUsed" class="text-xs font-normal">0%</span>
+                </div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <div id="statUsed" class="text-2xl font-bold text-rose-600">0</div>
+                    <span class="text-xs text-rose-600 font-medium">已被他人兑换</span>
+                </div>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl shadow-sm border-l-4 border-l-amber-500 border-slate-200 bg-amber-50/20">
+                <div class="text-xs font-semibold text-amber-700 uppercase tracking-wider">⚠️ 格式错误 / 过期</div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <div id="statInvalid" class="text-2xl font-bold text-amber-600">0</div>
+                    <span class="text-xs text-amber-600">无法识别</span>
+                </div>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl shadow-sm border-l-4 border-l-indigo-500 border-slate-200 bg-indigo-50/20">
+                <div class="text-xs font-semibold text-indigo-700 uppercase tracking-wider">⚡ 进度与状态</div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <div id="statProgressPercent" class="text-2xl font-bold text-indigo-600">0%</div>
+                    <span id="statStatusText" class="text-xs text-indigo-600 font-medium">空闲待命</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 进度条 -->
+        <div id="progressBarContainer" class="hidden w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+            <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
+        </div>
+
+        <!-- 输入与控制卡片 -->
+        <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-base font-bold text-slate-800">待检测链接列表 (严格按输入行号顺序一一对应)</h2>
+                    <span id="inputCountBadge" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">0 条待测</span>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <label class="cursor-pointer px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition duration-150 flex items-center space-x-1">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        <span>导入文件 (.txt/.csv)</span>
+                        <input type="file" id="fileInput" accept=".txt,.csv,.xlsx" class="hidden" onchange="handleFileUpload(event)">
+                    </label>
+
+                    <button onclick="fillSampleLinks()" class="px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition duration-150">
+                        🎲 填入示例链接
+                    </button>
+
+                    <button onclick="clearInput()" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg transition duration-150">
+                        🧹 清空输入
+                    </button>
+                </div>
+            </div>
+
+            <!-- 文本输入框 -->
+            <div class="relative">
+                <textarea id="linksInput" rows="6" placeholder="请在此处粘贴待检测的 Google One / Jio 激活链接（每行一条链接）：&#10;第1行: https://serviceactivation.google.com/subscription/new/AQCpiI...&#10;第2行: https://serviceactivation.google.com/subscription/new/AQCPii...&#10;第3行: ...&#10;&#10;检测结果将严格与这里的第1行、第2行一一对应，并自动计算具体剩余失效天数与小时！" 
+                    class="w-full px-4 py-3 text-sm text-slate-800 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition duration-150 font-code"
+                    oninput="updateInputCount()"></textarea>
+            </div>
+
+            <!-- 控制按钮 -->
+            <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+                <div class="text-xs text-slate-500 flex items-center space-x-2">
+                    <span>💡 已支持实时计算 **具体剩余失效时间（如：还剩 59 天 4 小时）** 与 **截止日期**！</span>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <button id="stopBtn" onclick="stopBatchCheck()" disabled class="px-5 py-2.5 text-sm font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition duration-150">
+                        ⏹️ 停止检测
+                    </button>
+
+                    <button id="startBtn" onclick="startBatchCheck()" class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl shadow-md hover:shadow-lg transition duration-150 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span>🚀 开始批量检测 (时效倒计时)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 结果展示卡片 -->
+        <div class="glass-card rounded-2xl shadow-sm border border-slate-200 overflow-hidden space-y-0">
+            <!-- 结果栏顶部筛选与导出 -->
+            <div class="p-4 sm:px-6 bg-white border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <!-- 分类标签页 -->
+                <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 sm:pb-0">
+                    <button onclick="setFilter('ALL')" id="filterBtn_ALL" class="filter-tab px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 text-white transition">全部 (<span id="tabCountALL">0</span>)</button>
+                    <button onclick="setFilter('ACTIVE')" id="filterBtn_ACTIVE" class="filter-tab px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">🟢 仅看有效 (<span id="tabCountACTIVE">0</span>)</button>
+                    <button onclick="setFilter('USED')" id="filterBtn_USED" class="filter-tab px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">🔴 仅看已失效 (<span id="tabCountUSED">0</span>)</button>
+                    <button onclick="setFilter('OTHER')" id="filterBtn_OTHER" class="filter-tab px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">⚠️ 异常/过期 (<span id="tabCountOTHER">0</span>)</button>
+                </div>
+
+                <!-- 导出与操作 -->
+                <div class="flex items-center space-x-2">
+                    <button onclick="copyActiveLinks()" class="px-3.5 py-1.5 text-xs font-semibold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 rounded-lg transition duration-150 flex items-center space-x-1.5 shadow-sm">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        <span>复制全部有效链接</span>
+                    </button>
+
+                    <button onclick="exportTxt()" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition duration-150 flex items-center space-x-1">
+                        <span>📥 导出 TXT</span>
+                    </button>
+
+                    <button onclick="exportExcel()" class="px-3.5 py-1.5 text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm transition duration-150 flex items-center space-x-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span>📊 导出 Excel 报告</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 表格容器 -->
+            <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
+                <table class="w-full text-left text-sm text-slate-600 border-collapse">
+                    <thead class="bg-slate-100 text-xs font-bold text-slate-700 uppercase sticky top-0 z-10 border-b border-slate-200 shadow-sm">
+                        <tr>
+                            <th class="px-4 py-3.5 w-20 text-center">输入行号</th>
+                            <th class="px-4 py-3.5 w-36 text-center">状态判定</th>
+                            <th class="px-4 py-3.5 w-48 text-center">⏳ 时效倒计时 / 截止日</th>
+                            <th class="px-4 py-3.5 w-56">链接标识 (Token特征码)</th>
+                            <th class="px-4 py-3.5 w-56">权益套餐</th>
+                            <th class="px-4 py-3.5">判定说明 / 到期时间</th>
+                            <th class="px-4 py-3.5 w-20 text-right">耗时</th>
+                            <th class="px-4 py-3.5 w-28 text-center">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody" class="divide-y divide-slate-200/80">
+                        <tr>
+                            <td colspan="8" class="px-4 py-12 text-center text-slate-400">
+                                暂无检测结果，请在上方输入链接并点击「开始批量检测」
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- 配置模态框 (Modal) -->
+    <div id="settingsModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-xl w-full p-6 space-y-5 border border-slate-200">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+                    <span>⚙️</span>
+                    <span>检测配置与授权 (Google Cookie)</span>
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-sm">
+                <!-- 网络代理设置 -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">网络代理 (HTTP/SOCKS5)</label>
+                    <input type="text" id="cfgProxy" placeholder="例如: http://127.0.0.1:7890" class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none font-code">
+                    <p class="text-xs text-slate-400 mt-1">国内网络请务必配置本地代理 (如 Clash 默认 7890 端口，v2ray 默认 10809 端口)</p>
+                </div>
+
+                <!-- Google Cookie 设置 -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="font-semibold text-slate-700">Google 账号 Cookie</label>
+                        <button onclick="testCurrentCookie()" id="btnTestCookie" class="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center space-x-1">
+                            <span>🔍 测试 Cookie 连通性</span>
+                        </button>
+                    </div>
+                    <textarea id="cfgCookie" rows="4" placeholder="请粘贴浏览器中登录的 Google Cookie（支持直接复制 Cookie 标头完整字符串或 __Secure-1PSID / SID 等）" class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none font-code"></textarea>
+                    <div id="cookieTestResult" class="hidden mt-2 p-2.5 rounded-lg text-xs"></div>
+                </div>
+
+                <!-- 并发与超时 -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">并发检测线程数</label>
+                        <input type="number" id="cfgThreads" min="1" max="20" class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <span class="text-xs text-slate-400">推荐 5~10</span>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">单请求超时 (秒)</label>
+                        <input type="number" id="cfgTimeout" min="5" max="60" class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <span class="text-xs text-slate-400">推荐 15 秒</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-100">
+                <button onclick="closeSettingsModal()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition">取消</button>
+                <button onclick="saveSettings()" class="px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition">保存配置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie 获取教程模态框 -->
+    <div id="helpModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 space-y-4 border border-slate-200">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+                    <span>📖</span>
+                    <span>如何获取 Google 账号 Cookie？</span>
+                </h3>
+                <button onclick="closeHelpModal()" class="text-slate-400 hover:text-slate-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="text-sm text-slate-600 space-y-3 leading-relaxed">
+                <p class="font-medium text-slate-800">由于 Google 激活链接必须在登录状态下才能识别套餐详情与活性状态，因此需要提供您的 Google Cookie：</p>
+                
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2 font-code text-xs text-slate-700">
+                    <div class="font-semibold text-blue-600">步骤一：打开 Chrome 浏览器</div>
+                    <div>在 Chrome 中登录您的任一 Google 账号并打开 <a href="https://one.google.com" target="_blank" class="text-blue-600 underline">https://one.google.com</a></div>
+                    
+                    <div class="font-semibold text-blue-600 mt-2">步骤二：按 F12 打开开发者工具</div>
+                    <div>点击顶部 <strong>「网络 (Network)」</strong> 选项卡，刷新页面，点击左侧第一个 <strong>one.google.com</strong> 或 <strong>app?awwd=...</strong> 请求。</div>
+                    
+                    <div class="font-semibold text-blue-600 mt-2">步骤三：复制 Cookie 标头</div>
+                    <div>在右侧 <strong>「标头 (Headers)」 -> 「请求标头 (Request Headers)」</strong> 中找到 <code>Cookie: ...</code>，鼠标右键点击并复制该值。</div>
+                    
+                    <div class="font-semibold text-blue-600 mt-2">步骤四：粘贴并保存</div>
+                    <div>回到本工具，点击右上角 <strong>「配置中心」</strong>，粘贴到 Cookie 文本框中，点击 <strong>「测试连通性」</strong> 成功后保存即可！</div>
+                </div>
+
+                <div class="p-3 bg-amber-50 rounded-xl text-amber-800 text-xs border border-amber-200">
+                    💡 提示：Cookie 仅保存在您本地的 <code>config.json</code> 中，用于请求 Google 官方激活接口判定链接状态，不会泄露给任何第三方。
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-3 border-t border-slate-100">
+                <button onclick="closeHelpModal()" class="px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition">我明白了</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部状态栏 -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-400">
+        Google One & Jio 18-Month Gemini AI Pro Activation Link Activity Checker &copy; 2026
+    </footer>
+
+    <!-- 前端业务逻辑 JS -->
+    <script>
+        let globalConfig = {};
+        let currentTaskId = null;
+        let checkPollingTimer = null;
+        let allResults = [];
+        let currentFilter = 'ALL';
+
+        // 页面初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            loadConfig();
+            updateInputCount();
+        });
+
+        async function loadConfig() {
+            try {
+                const res = await fetch('/api/config');
+                const data = await res.json();
+                if (data.success) {
+                    globalConfig = data.config;
+                    document.getElementById('cfgProxy').value = globalConfig.proxy || '';
+                    document.getElementById('cfgCookie').value = globalConfig.cookie || '';
+                    document.getElementById('cfgThreads').value = globalConfig.threads || 5;
+                    document.getElementById('cfgTimeout').value = globalConfig.timeout || 15;
+
+                    const cookieBadge = document.getElementById('cookieBadge');
+                    const cookieBadgeText = document.getElementById('cookieBadgeText');
+                    if (globalConfig.cookie && globalConfig.cookie.trim().length > 10) {
+                        cookieBadge.className = 'hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200';
+                        cookieBadgeText.innerText = 'Google Cookie 已就绪 ✅';
+                    } else {
+                        cookieBadge.className = 'hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200';
+                        cookieBadgeText.innerText = '未配置 Google Cookie (请配置)';
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to load config', e);
+            }
+        }
+
+        async function saveSettings() {
+            const newCfg = {
+                proxy: document.getElementById('cfgProxy').value.trim(),
+                cookie: document.getElementById('cfgCookie').value.trim(),
+                threads: parseInt(document.getElementById('cfgThreads').value) || 5,
+                timeout: parseInt(document.getElementById('cfgTimeout').value) || 15
+            };
+
+            try {
+                const res = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newCfg)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    globalConfig = data.config;
+                    closeSettingsModal();
+                    loadConfig();
+                    alert('配置已成功保存！');
+                }
+            } catch (e) {
+                alert('保存配置失败: ' + e);
+            }
+        }
+
+        async function testCurrentCookie() {
+            const cookie = document.getElementById('cfgCookie').value.trim();
+            const proxy = document.getElementById('cfgProxy').value.trim();
+            const resDiv = document.getElementById('cookieTestResult');
+            const btn = document.getElementById('btnTestCookie');
+
+            btn.innerText = '⏳ 测试中...';
+            resDiv.className = 'mt-2 p-2.5 rounded-lg text-xs bg-slate-100 text-slate-700 block';
+            resDiv.innerText = '正在向 Google One 发送测试探测请求...';
+
+            try {
+                const res = await fetch('/api/test-cookie', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cookie, proxy })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    resDiv.className = 'mt-2 p-2.5 rounded-lg text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 block';
+                    resDiv.innerText = '✅ ' + data.message;
+                } else {
+                    resDiv.className = 'mt-2 p-2.5 rounded-lg text-xs bg-rose-50 text-rose-700 border border-rose-200 block';
+                    resDiv.innerText = '❌ ' + data.message;
+                }
+            } catch (e) {
+                resDiv.className = 'mt-2 p-2.5 rounded-lg text-xs bg-rose-50 text-rose-700 border border-rose-200 block';
+                resDiv.innerText = '❌ 请求异常: ' + e;
+            } finally {
+                btn.innerText = '🔍 测试 Cookie 连通性';
+            }
+        }
+
+        function updateInputCount() {
+            const text = document.getElementById('linksInput').value.trim();
+            const lines = text ? text.split('\n').map(l => l.trim()).filter(l => l.length > 0) : [];
+            document.getElementById('inputCountBadge').innerText = `${lines.length} 条待测`;
+        }
+
+        function fillSampleLinks() {
+            const samples = [
+                "https://serviceactivation.google.com/subscription/new/AQCpiIHej8nqT7bayckk8a6QsgOuffjUBADAo-4A8Ia3TsfCNYphRcd0hE5zILnOOq9HRDQiSInJosMvZnBuT2ExTq5s2fmevPRpZAoKjmIOr9_GiavfPjcw-AHoHB8yOT48znWhbKwS-2DacScVyxwfsT9xNtu_MEXCLa8wR4cahayECj1Bx1nERrOw4MFjriA0calOqMuzsYhbjXlEosZ2oCf2MDsIbUb0_h6WxrQXZZASnDjpqe4uCeLvTrOFuz31RO3skeK2Eap7Fg==",
+                "https://serviceactivation.google.com/subscription/new/AQCPiiH3Zc2aLnxLQkIAYVANazjvAK6pHpcG9JtkCYazlAhCE3XY7J4HM8luA8chZMfFepePNNRUmFWHnJdtnb_DF3IiQM009vbTKpXPrzJ6XskoAy1mqznz4TxvatWErMwtBAPS-vGffWiUfcS-e8dOe_fELJWZB6jjmnFO7MVdlGIJfkogsipNK5U0vmdei2Kj6gJWJ-zgpvtEJjnaOMCJBlzvoQybbZMFW1162O-pijWfY3TEcwyHWnZTXrGyKFJEmbZBrEhnipZPNQ=="
+            ];
+            document.getElementById('linksInput').value = samples.join('\n');
+            updateInputCount();
+        }
+
+        function clearInput() {
+            document.getElementById('linksInput').value = '';
+            updateInputCount();
+        }
+
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const res = await fetch('/api/parse-file', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success && data.links && data.links.length > 0) {
+                    const current = document.getElementById('linksInput').value.trim();
+                    const combined = current ? current + '\n' + data.links.join('\n') : data.links.join('\n');
+                    document.getElementById('linksInput').value = combined;
+                    updateInputCount();
+                    alert(`成功从 ${file.name} 中导入 ${data.count} 条链接！`);
+                } else {
+                    alert('未能在文件中识别出有效链接');
+                }
+            } catch (e) {
+                alert('解析文件失败: ' + e);
+            }
+            event.target.value = '';
+        }
+
+        // 开始批量检测
+        async function startBatchCheck() {
+            const text = document.getElementById('linksInput').value.trim();
+            if (!text) {
+                alert('请先输入或粘贴待检测的激活链接！');
+                return;
+            }
+
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length === 0) {
+                alert('没有有效的链接！');
+                return;
+            }
+
+            // 重置状态与结果
+            allResults = [];
+            renderTable();
+            updateStats({ total: lines.length, completed: 0, active: 0, used: 0, invalid: 0 });
+
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('startBtn').classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('stopBtn').disabled = false;
+            document.getElementById('progressBarContainer').classList.remove('hidden');
+            document.getElementById('statStatusText').innerText = '正在按序检测...';
+
+            try {
+                const res = await fetch('/api/check-batch-start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ links: lines })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    currentTaskId = data.task_id;
+                    pollStatus();
+                } else {
+                    alert('启动检测失败: ' + data.error);
+                    resetUIState();
+                }
+            } catch (e) {
+                alert('请求异常: ' + e);
+                resetUIState();
+            }
+        }
+
+        function pollStatus() {
+            if (checkPollingTimer) clearInterval(checkPollingTimer);
+            let offset = 0;
+
+            checkPollingTimer = setInterval(async () => {
+                if (!currentTaskId) return;
+                try {
+                    const res = await fetch(`/api/check-batch-status/${currentTaskId}?offset=${offset}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        if (data.new_results && data.new_results.length > 0) {
+                            allResults.push(...data.new_results);
+                            allResults.sort((a, b) => (a.index || 0) - (b.index || 0));
+                            offset = data.next_offset;
+                            renderTable();
+                        }
+
+                        updateStats(data.stats);
+
+                        const pct = data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0;
+                        document.getElementById('progressBar').style.width = pct + '%';
+                        document.getElementById('statProgressPercent').innerText = pct + '%';
+
+                        if (!data.is_running) {
+                            clearInterval(checkPollingTimer);
+                            resetUIState();
+                            document.getElementById('statStatusText').innerText = '检测完成 ✅';
+                        }
+                    }
+                } catch (e) {
+                    console.error('Polling error', e);
+                }
+            }, 800);
+        }
+
+        async function stopBatchCheck() {
+            if (!currentTaskId) return;
+            try {
+                await fetch(`/api/check-batch-stop/${currentTaskId}`, { method: 'POST' });
+                document.getElementById('statStatusText').innerText = '已中止 ⏹️';
+            } catch (e) {
+                console.error(e);
+            }
+            if (checkPollingTimer) clearInterval(checkPollingTimer);
+            resetUIState();
+        }
+
+        function resetUIState() {
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('startBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+            document.getElementById('stopBtn').disabled = true;
+        }
+
+        function updateStats(stats) {
+            document.getElementById('statTotal').innerText = stats.total || 0;
+            document.getElementById('statActive').innerText = stats.active || 0;
+            document.getElementById('statUsed').innerText = stats.used || 0;
+            document.getElementById('statInvalid').innerText = (stats.invalid || 0) + (stats.need_auth || 0) + (stats.error || 0);
+
+            const total = stats.total || 1;
+            const activePct = Math.round(((stats.active || 0) / total) * 100);
+            const usedPct = Math.round(((stats.used || 0) / total) * 100);
+            document.getElementById('rateActive').innerText = activePct + '%';
+            document.getElementById('rateUsed').innerText = usedPct + '%';
+
+            // 更新选项卡徽章
+            document.getElementById('tabCountALL').innerText = allResults.length;
+            document.getElementById('tabCountACTIVE').innerText = allResults.filter(r => r.status === 'ACTIVE').length;
+            document.getElementById('tabCountUSED').innerText = allResults.filter(r => r.status === 'USED').length;
+            document.getElementById('tabCountOTHER').innerText = allResults.filter(r => r.status !== 'ACTIVE' && r.status !== 'USED').length;
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(b => {
+                b.className = 'filter-tab px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition';
+            });
+            const activeBtn = document.getElementById(`filterBtn_${filter}`);
+            if (activeBtn) {
+                activeBtn.className = 'filter-tab px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 text-white transition';
+            }
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('resultsTableBody');
+            let filtered = allResults;
+            if (currentFilter === 'ACTIVE') {
+                filtered = allResults.filter(r => r.status === 'ACTIVE');
+            } else if (currentFilter === 'USED') {
+                filtered = allResults.filter(r => r.status === 'USED');
+            } else if (currentFilter === 'OTHER') {
+                filtered = allResults.filter(r => r.status !== 'ACTIVE' && r.status !== 'USED');
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="px-4 py-8 text-center text-slate-400 text-xs">
+                            ${allResults.length === 0 ? '暂无检测结果，请在上方输入链接并点击「开始批量检测」' : '当前筛选条件暂无数据'}
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach((r) => {
+                let rowClass = 'hover:bg-slate-50 transition duration-150';
+                let badgeHtml = '';
+                let indexBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold font-code bg-slate-200 text-slate-800">第 ${r.index} 条</span>`;
+                let expireHtml = '-';
+
+                if (r.status === 'ACTIVE') {
+                    rowClass = 'row-active hover:bg-emerald-100/70 transition duration-150';
+                    indexBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold font-code bg-emerald-600 text-white shadow-sm">第 ${r.index} 条</span>`;
+                    badgeHtml = `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white shadow-sm animate-pulse">🟢 有效 · 可激活</span>`;
+                    
+                    expireHtml = `
+                        <div class="flex flex-col items-center">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-sm">
+                                ⏳ ${escapeHtml(r.remaining_time || '有效')}
+                            </span>
+                            <span class="text-[10px] text-emerald-700 font-medium mt-0.5">${escapeHtml(r.expire_deadline || '')}</span>
+                        </div>
+                    `;
+                } else if (r.status === 'USED') {
+                    rowClass = 'row-used hover:bg-rose-100/70 transition duration-150';
+                    indexBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold font-code bg-rose-600 text-white shadow-sm">第 ${r.index} 条</span>`;
+                    badgeHtml = `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-500 text-white shadow-sm">🔴 已失效 · 已被使用</span>`;
+                    expireHtml = `<span class="text-xs text-rose-600 font-semibold">已被兑换</span>`;
+                } else if (r.status === 'NEED_AUTH') {
+                    rowClass = 'row-other hover:bg-amber-100/70 transition duration-150';
+                    badgeHtml = `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-500 text-white shadow-sm">🟡 需配置 Cookie</span>`;
+                    expireHtml = `<span class="text-xs text-amber-600 font-medium">需登录态</span>`;
+                } else if (r.status === 'INVALID') {
+                    rowClass = 'row-other hover:bg-amber-100/70 transition duration-150';
+                    badgeHtml = `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-orange-500 text-white shadow-sm">⚠️ 格式错误 / 过期</span>`;
+                    expireHtml = `<span class="text-xs text-orange-600 font-semibold">已过期失效</span>`;
+                } else {
+                    badgeHtml = `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-500 text-white shadow-sm">❌ 检测异常</span>`;
+                    expireHtml = `<span class="text-xs text-slate-400">-</span>`;
+                }
+
+                const snippet = r.token_snippet || (r.token ? (r.token.slice(0, 10) + '...' + r.token.slice(-8)) : '-');
+                const fullUrl = r.url || r.raw_input || '';
+
+                html += `
+                    <tr class="${rowClass}">
+                        <td class="px-4 py-3 text-center whitespace-nowrap">${indexBadge}</td>
+                        <td class="px-4 py-3 text-center whitespace-nowrap">${badgeHtml}</td>
+                        <td class="px-4 py-3 text-center whitespace-nowrap">${expireHtml}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-code text-xs font-semibold px-2 py-1 rounded bg-white/90 border border-slate-200 text-slate-800" title="${escapeHtml(fullUrl)}">
+                                    ${escapeHtml(snippet)}
+                                </span>
+                                <button onclick="copyToClipboard('${escapeJs(fullUrl)}')" title="复制此条链接" class="p-1 text-slate-500 hover:text-blue-600 hover:bg-white rounded transition">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-xs font-semibold text-slate-800">${escapeHtml(r.plan_info || '-')}</td>
+                        <td class="px-4 py-3 text-xs text-slate-700 max-w-xs break-words">
+                            <div>${escapeHtml(r.details || '')}</div>
+                            ${r.plan_valid_until && r.plan_valid_until !== '-' ? `<div class="text-[11px] text-slate-500 mt-0.5">权益到期: ${escapeHtml(r.plan_valid_until)}</div>` : ''}
+                        </td>
+                        <td class="px-4 py-3 text-right text-xs font-code text-slate-400 whitespace-nowrap">${r.duration_ms || 0}ms</td>
+                        <td class="px-4 py-3 text-center whitespace-nowrap">
+                            <div class="flex items-center justify-center space-x-1.5">
+                                <button onclick="copyToClipboard('${escapeJs(fullUrl)}')" class="px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition">
+                                    复制
+                                </button>
+                                <a href="${escapeHtml(fullUrl)}" target="_blank" class="px-2.5 py-1 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 rounded border border-slate-200 transition flex items-center space-x-1">
+                                    <span>打开</span>
+                                    <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function copyActiveLinks() {
+            const actives = allResults.filter(r => r.status === 'ACTIVE');
+            if (actives.length === 0) {
+                alert('当前没有检测出有效的激活链接！');
+                return;
+            }
+            const textLines = actives.map(r => `第 ${r.index} 条 (${r.remaining_time || '有效'} | 截止: ${r.expire_deadline || ''}): ${r.url || r.raw_input}`).join('\n');
+            navigator.clipboard.writeText(textLines).then(() => {
+                alert(`已成功复制 ${actives.length} 条有效激活链接（已带时效与对应行号）！`);
+            });
+        }
+
+        function exportTxt() {
+            const actives = allResults.filter(r => r.status === 'ACTIVE');
+            if (actives.length === 0) {
+                alert('当前暂无有效激活链接可供导出！');
+                return;
+            }
+            const textLines = actives.map(r => `[第 ${r.index} 条] [${r.remaining_time || '有效'} | 截止: ${r.expire_deadline || ''}] ${r.url || r.raw_input}`).join('\n');
+            const blob = new Blob([textLines], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `GoogleOne_Active_Links_${formatDateTime()}.txt`;
+            a.click();
+        }
+
+        async function exportExcel() {
+            if (allResults.length === 0) {
+                alert('暂无检测结果可供导出！');
+                return;
+            }
+            try {
+                const res = await fetch('/api/export-excel', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ results: allResults, filter_status: currentFilter })
+                });
+                const blob = await res.blob();
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `GoogleOne_Jio_Detection_Report_${formatDateTime()}.xlsx`;
+                a.click();
+            } catch (e) {
+                alert('导出 Excel 失败: ' + e);
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('链接已成功复制到剪贴板！');
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function escapeJs(str) {
+            if (!str) return '';
+            return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+
+        function formatDateTime() {
+            const d = new Date();
+            return d.getFullYear() +
+                String(d.getMonth() + 1).padStart(2, '0') +
+                String(d.getDate()).padStart(2, '0') + '_' +
+                String(d.getHours()).padStart(2, '0') +
+                String(d.getMinutes()).padStart(2, '0');
+        }
+
+        function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
+        function openHelpModal() { document.getElementById('helpModal').classList.remove('hidden'); }
+        function closeHelpModal() { document.getElementById('helpModal').classList.add('hidden'); }
+    </script>
+</body>
+</html>
