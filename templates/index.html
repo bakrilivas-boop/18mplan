@@ -391,13 +391,23 @@
 
     <!-- 前端业务逻辑 JS -->
     <script>
-        let cachedCookie = localStorage.getItem('g1_cookie') || '';
-        let cachedProxy = localStorage.getItem('g1_proxy') || '';
-        let cachedThreads = parseInt(localStorage.getItem('g1_threads') || '8');
-        let cachedTimeout = parseInt(localStorage.getItem('g1_timeout') || '10');
+        // 安全的 localStorage 访问（避免隐私模式 SecurityError 崩溃）
+        function safeGetItem(key, fallback) {
+            try { return localStorage.getItem(key) || fallback; }
+            catch(e) { return fallback; }
+        }
+        function safeSetItem(key, val) {
+            try { localStorage.setItem(key, val); } catch(e) {}
+        }
+
+        let cachedCookie = safeGetItem('g1_cookie', '');
+        let cachedProxy = safeGetItem('g1_proxy', '');
+        let cachedThreads = parseInt(safeGetItem('g1_threads', '8')) || 8;
+        let cachedTimeout = parseInt(safeGetItem('g1_timeout', '10')) || 10;
 
         let allResults = [];
         let currentFilter = 'ALL';
+        let currentAbortController = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             initUI();
@@ -418,7 +428,7 @@
                     const data = await res.json();
                     if (data.success && data.config.cookie) {
                         cachedCookie = data.config.cookie;
-                        localStorage.setItem('g1_cookie', cachedCookie);
+                        safeSetItem('g1_cookie', cachedCookie);
                         document.getElementById('cfgCookie').value = cachedCookie;
                         updateCookieBadge();
                     }
@@ -448,10 +458,10 @@
             cachedThreads = parseInt(document.getElementById('cfgThreads').value) || 8;
             cachedTimeout = parseInt(document.getElementById('cfgTimeout').value) || 10;
 
-            localStorage.setItem('g1_cookie', cachedCookie);
-            localStorage.setItem('g1_proxy', cachedProxy);
-            localStorage.setItem('g1_threads', cachedThreads);
-            localStorage.setItem('g1_timeout', cachedTimeout);
+            safeSetItem('g1_cookie', cachedCookie);
+            safeSetItem('g1_proxy', cachedProxy);
+            safeSetItem('g1_threads', cachedThreads);
+            safeSetItem('g1_timeout', cachedTimeout);
 
             try {
                 await fetch('/api/config', {
@@ -590,11 +600,13 @@
             document.getElementById('statStatusText').innerText = '高并发秒级检测中...';
 
             const batchStartTime = Date.now();
+            currentAbortController = new AbortController();
 
             try {
                 const res = await fetch('/api/check-batch-sync', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    signal: currentAbortController.signal,
                     body: JSON.stringify({
                         links: lines,
                         cookie: cachedCookie,
@@ -629,27 +641,34 @@
         }
 
         function stopBatchCheck() {
+            if (currentAbortController) {
+                currentAbortController.abort();
+                currentAbortController = null;
+            }
             resetUIState();
+            document.getElementById('statStatusText').innerText = '已手动停止';
         }
 
         function resetUIState() {
             document.getElementById('startBtn').disabled = false;
             document.getElementById('startBtn').classList.remove('opacity-50', 'cursor-not-allowed');
             document.getElementById('stopBtn').disabled = true;
+            currentAbortController = null;
             setTimeout(() => {
                 document.getElementById('progressBarContainer').classList.add('hidden');
             }, 1500);
         }
 
         function updateStats(stats) {
-            document.getElementById('statTotal').innerText = stats.total || 0;
-            document.getElementById('statActive').innerText = stats.active || 0;
-            document.getElementById('statUsed').innerText = stats.used || 0;
-            document.getElementById('statInvalid').innerText = (stats.invalid || 0) + (stats.need_auth || 0) + (stats.error || 0);
+            const s = stats || {};
+            document.getElementById('statTotal').innerText = s.total || 0;
+            document.getElementById('statActive').innerText = s.active || 0;
+            document.getElementById('statUsed').innerText = s.used || 0;
+            document.getElementById('statInvalid').innerText = (s.invalid || 0) + (s.need_auth || 0) + (s.error || 0);
 
-            const total = stats.total || 1;
-            const activePct = Math.round(((stats.active || 0) / total) * 100);
-            const usedPct = Math.round(((stats.used || 0) / total) * 100);
+            const total = s.total || 1;
+            const activePct = Math.round(((s.active || 0) / total) * 100);
+            const usedPct = Math.round(((s.used || 0) / total) * 100);
             document.getElementById('rateActive').innerText = activePct + '%';
             document.getElementById('rateUsed').innerText = usedPct + '%';
 
@@ -872,10 +891,8 @@
                 alert('当前没有检测出有效的激活链接！');
                 return;
             }
-            const textLines = actives.map(r => `第 ${r.index} 条 (${r.remaining_time || '有效'} | 截止: ${r.expire_deadline || ''}): ${r.url || r.raw_input}`).join('\n');
-            navigator.clipboard.writeText(textLines).then(() => {
-                alert(`已成功复制 ${actives.length} 条有效激活链接（已带时效与对应行号）！`);
-            });
+            const textLines = actives.map(r => `第 ${r.index || '?'} 条 (${r.remaining_time || '有效'} | 截止: ${r.expire_deadline || ''}): ${r.url || r.raw_input || '-'}`).join('\n');
+            copyToClipboard(textLines, `已成功复制 ${actives.length} 条有效激活链接（已带时效与对应行号）！`);
         }
 
         function exportTxt() {
@@ -884,12 +901,13 @@
                 alert('当前暂无有效激活链接可供导出！');
                 return;
             }
-            const textLines = actives.map(r => `[第 ${r.index} 条] [${r.remaining_time || '有效'} | 截止: ${r.expire_deadline || ''}] ${r.url || r.raw_input}`).join('\n');
+            const textLines = actives.map(r => `[第 ${r.index || '?'} 条] [${r.remaining_time || '有效'} | 截止: ${r.expire_deadline || ''}] ${r.url || r.raw_input || '-'}`).join('\n');
             const blob = new Blob([textLines], { type: 'text/plain;charset=utf-8' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = `GoogleOne_Active_Links.txt`;
             a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 3000);
         }
 
         async function exportExcel() {
@@ -903,30 +921,60 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ results: allResults, filter_status: currentFilter })
                 });
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    alert('导出失败: ' + (errData.error || res.statusText));
+                    return;
+                }
                 const blob = await res.blob();
                 const a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);
                 a.download = `GoogleOne_Detection_Report.xlsx`;
                 a.click();
+                setTimeout(() => URL.revokeObjectURL(a.href), 3000);
             } catch (e) {
                 alert('导出 Excel 失败: ' + e);
             }
         }
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('链接已成功复制到剪贴板！');
-            });
+        function copyToClipboard(text, successMsg) {
+            const msg = successMsg || '链接已成功复制到剪贴板！';
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert(msg);
+                }).catch(() => {
+                    fallbackCopy(text, msg);
+                });
+            } else {
+                fallbackCopy(text, msg);
+            }
+        }
+
+        function fallbackCopy(text, msg) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.cssText = 'position:fixed;left:-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                alert(msg);
+            } catch (e) {
+                alert('复制失败，请手动复制');
+            }
+            document.body.removeChild(ta);
         }
 
         function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+            if (str === null || str === undefined) return '';
+            const s = String(str);
+            return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
         function escapeJs(str) {
-            if (!str) return '';
-            return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+            if (str === null || str === undefined) return '';
+            const s = String(str);
+            return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         }
 
         function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }

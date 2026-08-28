@@ -9,7 +9,7 @@ import time
 import uuid
 import threading
 from typing import Dict, List
-from flask import Flask, render_template, request, jsonify, Response, send_file
+from flask import Flask, render_template, request, jsonify, send_file
 import xlsxwriter
 
 from config import load_config, save_config
@@ -21,10 +21,20 @@ from checker import (
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 限制上传文件最大 16MB
 
 # 内存中保存的批量任务
 # task_id -> { "is_running": bool, "total": int, "completed": int, "results": list, "checker": BatchChecker }
 tasks: Dict[str, dict] = {}
+
+
+def safe_int(val, default: int) -> int:
+    """安全的整型转换，避免 ValueError 崩溃"""
+    try:
+        result = int(val)
+        return result if result > 0 else default
+    except (TypeError, ValueError):
+        return default
 
 
 @app.route("/")
@@ -59,14 +69,14 @@ def api_test_cookie():
 @app.route("/api/check-single", methods=["POST"])
 def api_check_single():
     data = request.get_json() or {}
-    link = data.get("link", "").strip()
+    link = str(data.get("link") or "").strip()
     if not link:
         return jsonify({"success": False, "error": "链接不能为空"})
 
     cfg = load_config()
     proxy = data.get("proxy") or cfg.get("proxy")
     cookie = data.get("cookie") or cfg.get("cookie")
-    timeout = int(data.get("timeout") or cfg.get("timeout", 15))
+    timeout = safe_int(data.get("timeout") or cfg.get("timeout", 15), 15)
 
     checker = LinkChecker(proxy=proxy, cookie=cookie, timeout=timeout)
     result = checker.check_single_link(link)
@@ -83,8 +93,8 @@ def api_check_batch_start():
     cfg = load_config()
     proxy = data.get("proxy") or cfg.get("proxy")
     cookie = data.get("cookie") or cfg.get("cookie")
-    threads = int(data.get("threads") or cfg.get("threads", 5))
-    timeout = int(data.get("timeout") or cfg.get("timeout", 15))
+    threads = safe_int(data.get("threads") or cfg.get("threads", 5), 5)
+    timeout = safe_int(data.get("timeout") or cfg.get("timeout", 15), 15)
 
     task_id = str(uuid.uuid4())
     batch_checker = BatchChecker(proxy=proxy, cookie=cookie, max_workers=threads, timeout=timeout)
@@ -129,10 +139,10 @@ def api_check_batch_sync():
 
     req_proxy = data.get("proxy")
     if req_proxy is not None:
-        cfg["proxy"] = req_proxy.strip()
+        cfg["proxy"] = str(req_proxy).strip()
 
-    threads = int(data.get("threads") or cfg.get("threads", 8))
-    timeout = int(data.get("timeout") or cfg.get("timeout", 10))
+    threads = safe_int(data.get("threads") or cfg.get("threads", 8), 8)
+    timeout = safe_int(data.get("timeout") or cfg.get("timeout", 10), 10)
 
     batch_checker = BatchChecker(
         proxy=cfg.get("proxy"),
@@ -148,7 +158,7 @@ def api_check_batch_sync():
         "completed": len(results),
         "active": sum(1 for r in results if r.get("status") == STATUS_ACTIVE),
         "used": sum(1 for r in results if r.get("status") == STATUS_USED),
-        "invalid": sum(1 for r in results if r.get("status") == STATUS_INVALID),
+        "invalid": sum(1 for r in results if r.get("status") in (STATUS_INVALID, STATUS_INELIGIBLE)),
         "need_auth": sum(1 for r in results if r.get("status") == STATUS_NEED_AUTH),
         "error": sum(1 for r in results if r.get("status") == STATUS_ERROR)
     }
@@ -166,7 +176,7 @@ def api_check_batch_status(task_id):
         return jsonify({"success": False, "error": "任务不存在或已过期"}), 404
 
     task_data = tasks[task_id]
-    offset = int(request.args.get("offset", 0))
+    offset = safe_int(request.args.get("offset", 0), 0)
     new_results = task_data["results"][offset:]
 
     # 统计数据
@@ -257,7 +267,7 @@ def api_export_excel():
         results = [r for r in results if r.get("status") == filter_status]
 
     # 按原始输入行号排序
-    results.sort(key=lambda x: x.get("index", 0))
+    results.sort(key=lambda x: safe_int(x.get("index", 0), 0))
 
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})

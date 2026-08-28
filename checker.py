@@ -6,7 +6,6 @@ import sys
 import re
 import time
 from datetime import datetime
-import urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, List, Optional, Callable
 
@@ -60,11 +59,12 @@ def extract_token_and_normalize_url(raw_input: str) -> tuple[str, str]:
     if token_match:
         token = token_match.group(1)
     else:
-        # 如果整段看起来像Token
+        # 如果整段看起来像Token（纯Base64字符集，长度>=20）
         if re.match(r'^[A-Za-z0-9_\-+=]{20,}$', url):
             token = url
         else:
-            token = url
+            # 无法识别有效 Token，返回空
+            return "", ""
 
     # 直接规范化为 one.google.com 激活直达地址
     normalized_url = f"https://one.google.com/activate-plan/subscription/new/{token}"
@@ -128,11 +128,14 @@ def extract_expiration_info(html_content: str) -> tuple[str, str, str]:
         month = int(m1.group(1))
         day = int(m1.group(2))
         year = datetime.now().year
-        expire_date = datetime(year, month, day, 23, 59, 59)
-        # 若当前时间已过该日期超60天，判断为跨年
-        if datetime.now() > expire_date and (datetime.now() - expire_date).days > 60:
-            expire_date = datetime(year + 1, month, day, 23, 59, 59)
-        expire_deadline_text = f"{month}月{day}日截止"
+        try:
+            expire_date = datetime(year, month, day, 23, 59, 59)
+            # 若当前时间已过该日期超60天，判断为跨年
+            if datetime.now() > expire_date and (datetime.now() - expire_date).days > 60:
+                expire_date = datetime(year + 1, month, day, 23, 59, 59)
+            expire_deadline_text = f"{month}月{day}日截止"
+        except ValueError:
+            pass
 
     # 2. 中文包含年份: (\d{4})年(\d{1,2})月(\d{1,2})日
     if not expire_date:
@@ -141,8 +144,11 @@ def extract_expiration_info(html_content: str) -> tuple[str, str, str]:
             year = int(m2.group(1))
             month = int(m2.group(2))
             day = int(m2.group(3))
-            expire_date = datetime(year, month, day, 23, 59, 59)
-            expire_deadline_text = f"{year}年{month}月{day}日截止"
+            try:
+                expire_date = datetime(year, month, day, 23, 59, 59)
+                expire_deadline_text = f"{year}年{month}月{day}日截止"
+            except ValueError:
+                pass
 
     # 3. 英文匹配: Offer ends (?:on )?October 26
     if not expire_date:
@@ -247,9 +253,6 @@ class LinkChecker:
             "Sec-Fetch-User": "?1",
             "Upgrade-Insecure-Requests": "1"
         }
-        if self.cookie_str:
-            clean_cookie = "; ".join([f"{k}={v}" for k, v in self.cookies_dict.items()]) if self.cookies_dict else self.cookie_str
-            headers["Cookie"] = clean_cookie
 
         try:
             session = requests.Session()
@@ -347,8 +350,6 @@ class LinkChecker:
             "订阅已在使用中",
             "此订阅链接已被使用",
             "已被使用",
-            "探索 Google One 提供的福利和其他优惠",
-            "探索 Google One",
             "Subscription is already in use",
             "This subscription link has already been used",
             "This subscription link has been used",
@@ -373,47 +374,7 @@ class LinkChecker:
                     "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
                 }
 
-        # 3. 判定是否有效（未被使用，可激活） - 对应截图1
-        active_keywords = [
-            "激活Jio提供的Google AI Pro方案",
-            "Jio提供的Google AI Pro方案",
-            "Google AI Pro方案",
-            "免费畅享 18 个月",
-            "免费畅享 18",
-            "18 个月",
-            "18 months",
-            "₹35,100",
-            "35,100",
-            "Nano Banana Pro",
-            "5 TB",
-            "切换方案",
-            "立即激活",
-            "Jio",
-            "Activate the Google AI Pro plan",
-            "Google AI Pro plan provided by Jio",
-            "free for 18 months"
-        ]
-        match_count = sum(1 for kw in active_keywords if kw in html)
-        if match_count >= 1:
-            plan_info = "Jio 赠送 18个月 Google AI Pro (5TB + Gemini Pro)"
-            deadline_str = f"（截止: {expire_deadline}）" if expire_deadline else ""
-            return {
-                "raw_input": raw_input,
-                "token": token,
-                "url": url,
-                "status": STATUS_ACTIVE,
-                "status_label": STATUS_LABELS[STATUS_ACTIVE]["text"],
-                "status_badge": STATUS_LABELS[STATUS_ACTIVE]["badge"],
-                "details": f"链接有效！尚未激活，可免费畅享 18 个月方案 {deadline_str}",
-                "plan_info": plan_info,
-                "expire_deadline": expire_deadline or "有效（截止日待确认）",
-                "remaining_time": remaining_time if remaining_time != "-" else "有效",
-                "plan_valid_until": plan_valid_until,
-                "duration_ms": duration_ms,
-                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
-            }
-
-        # 4. 判定是否链接格式错误或已过期
+        # 3. 判定是否链接格式错误或已过期（必须在有效判定之前，避免过期页面含"Jio"等宽泛词被误判为有效）
         if status_code in (404, 410):
             return {
                 "raw_input": raw_input,
@@ -439,7 +400,8 @@ class LinkChecker:
             "404 Not Found",
             "Invalid offer",
             "Offer expired",
-            "This link is no longer valid"
+            "This link is no longer valid",
+            "offer is no longer available"
         ]
         for kw in invalid_keywords:
             if kw in html:
@@ -459,7 +421,7 @@ class LinkChecker:
                     "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
                 }
 
-        # 5. 账号资格不符
+        # 4. 账号资格不符
         ineligible_keywords = ["不符合条件", "不符合此优惠的条件", "Not eligible"]
         for kw in ineligible_keywords:
             if kw in html:
@@ -478,6 +440,46 @@ class LinkChecker:
                     "duration_ms": duration_ms,
                     "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
                 }
+
+        # 5. 判定是否有效（未被使用，可激活）- 放在过期/无效判定之后，避免过期页面误判
+        active_keywords = [
+            "激活Jio提供的Google AI Pro方案",
+            "Jio提供的Google AI Pro方案",
+            "Google AI Pro方案",
+            "免费畅享 18 个月",
+            "免费畅享 18",
+            "18 个月",
+            "18 months",
+            "₹35,100",
+            "35,100",
+            "Nano Banana Pro",
+            "5 TB",
+            "切换方案",
+            "立即激活",
+            "Jio",
+            "Activate the Google AI Pro plan",
+            "Google AI Pro plan provided by Jio",
+            "free for 18 months"
+        ]
+        match_count = sum(1 for kw in active_keywords if kw in html)
+        if match_count >= 2:
+            plan_info = "Jio 赠送 18个月 Google AI Pro (5TB + Gemini Pro)"
+            deadline_str = f"（截止: {expire_deadline}）" if expire_deadline else ""
+            return {
+                "raw_input": raw_input,
+                "token": token,
+                "url": url,
+                "status": STATUS_ACTIVE,
+                "status_label": STATUS_LABELS[STATUS_ACTIVE]["text"],
+                "status_badge": STATUS_LABELS[STATUS_ACTIVE]["badge"],
+                "details": f"链接有效！尚未激活，可免费畅享 18 个月方案 {deadline_str}",
+                "plan_info": plan_info,
+                "expire_deadline": expire_deadline or "有效（截止日待确认）",
+                "remaining_time": remaining_time if remaining_time != "-" else "有效",
+                "plan_valid_until": plan_valid_until,
+                "duration_ms": duration_ms,
+                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+            }
 
         # 6. 未知返回内容（带有 Google One 特征且最终URL仍在 Google 域名内）
         if ("one.google.com" in final_url or "serviceactivation.google.com" in final_url) and ("Google One" in html or "one.google.com" in html):
