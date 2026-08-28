@@ -4,6 +4,7 @@ Web 端服务入口与 REST API
 import os
 import sys
 import io
+import re
 import time
 import uuid
 import threading

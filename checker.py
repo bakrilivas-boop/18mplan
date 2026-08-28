@@ -150,6 +150,22 @@ def extract_expiration_info(html_content: str) -> tuple[str, str, str]:
         if m3:
             month_str, day_str, year_str = m3.group(1), m3.group(2), m3.group(3)
             expire_deadline_text = f"{month_str} {day_str} 截止"
+            # 将英文月份名转为数字
+            month_names = {
+                'january': 1, 'february': 2, 'march': 3, 'april': 4,
+                'may': 5, 'june': 6, 'july': 7, 'august': 8,
+                'september': 9, 'october': 10, 'november': 11, 'december': 12
+            }
+            month_num = month_names.get(month_str.lower())
+            if month_num:
+                day = int(day_str)
+                year = int(year_str) if year_str else datetime.now().year
+                try:
+                    expire_date = datetime(year, month_num, day, 23, 59, 59)
+                    if not year_str and datetime.now() > expire_date and (datetime.now() - expire_date).days > 60:
+                        expire_date = datetime(year + 1, month_num, day, 23, 59, 59)
+                except ValueError:
+                    pass
 
     # 计算剩余倒计时
     if expire_date:
@@ -380,6 +396,23 @@ class LinkChecker:
             }
 
         # 4. 判定是否链接格式错误或已过期
+        if status_code in (404, 410):
+            return {
+                "raw_input": raw_input,
+                "token": token,
+                "url": url,
+                "status": STATUS_INVALID,
+                "status_label": STATUS_LABELS[STATUS_INVALID]["text"],
+                "status_badge": STATUS_LABELS[STATUS_INVALID]["badge"],
+                "details": f"激活链接已过期或不存在 (HTTP {status_code})",
+                "plan_info": "无效/过期",
+                "expire_deadline": "已过期",
+                "remaining_time": "已过期",
+                "plan_valid_until": "-",
+                "duration_ms": duration_ms,
+                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+            }
+
         invalid_keywords = [
             "优惠已过期",
             "此优惠已失效",
@@ -391,7 +424,7 @@ class LinkChecker:
             "This link is no longer valid"
         ]
         for kw in invalid_keywords:
-            if kw in html or status_code in (404, 410):
+            if kw in html:
                 return {
                     "raw_input": raw_input,
                     "token": token,
@@ -399,7 +432,7 @@ class LinkChecker:
                     "status": STATUS_INVALID,
                     "status_label": STATUS_LABELS[STATUS_INVALID]["text"],
                     "status_badge": STATUS_LABELS[STATUS_INVALID]["badge"],
-                    "details": "激活链接已过期或不存在 (404/Invalid)",
+                    "details": "激活链接已过期或不存在",
                     "plan_info": "无效/过期",
                     "expire_deadline": "已过期",
                     "remaining_time": "已过期",

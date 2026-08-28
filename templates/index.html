@@ -186,7 +186,7 @@
             <!-- 控制按钮 -->
             <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
                 <div class="text-xs text-slate-500 flex items-center space-x-2">
-                    <span>💡 结果将严格按输入顺序排版，并显示 **具体剩余失效时间（如：还剩 59 天 4 小时）**！</span>
+                    <span>💡 结果将严格按输入顺序排版，并显示 <b>具体剩余失效时间（如：还剩 59 天 4 小时）</b>！</span>
                 </div>
 
                 <div class="flex items-center space-x-3">
@@ -554,9 +554,12 @@
 
             document.getElementById('startBtn').disabled = true;
             document.getElementById('startBtn').classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('stopBtn').disabled = false;
             document.getElementById('progressBarContainer').classList.remove('hidden');
             document.getElementById('progressBar').style.width = '30%';
             document.getElementById('statStatusText').innerText = '正在高并发秒级检测中...';
+
+            const batchStartTime = Date.now();
 
             try {
                 // 使用极速同步接口，直接将 Cookie 和链接一次性发给服务端并行检测
@@ -572,6 +575,8 @@
                     })
                 });
                 const data = await res.json();
+                const elapsedSec = ((Date.now() - batchStartTime) / 1000).toFixed(1);
+
                 if (data.success && data.results) {
                     allResults = data.results;
                     allResults.sort((a, b) => (a.index || 0) - (b.index || 0));
@@ -580,11 +585,14 @@
 
                     document.getElementById('progressBar').style.width = '100%';
                     document.getElementById('statProgressPercent').innerText = '100%';
-                    document.getElementById('statStatusText').innerText = '检测完成 ✅ (已按序排列)';
+                    document.getElementById('statStatusText').innerText = `检测完成 ✅ 总耗时 ${elapsedSec}秒`;
                 } else {
+                    document.getElementById('statStatusText').innerText = `检测异常 (${elapsedSec}秒)`;
                     alert('检测返回异常: ' + (data.error || '未知错误'));
                 }
             } catch (e) {
+                const elapsedSec = ((Date.now() - batchStartTime) / 1000).toFixed(1);
+                document.getElementById('statStatusText').innerText = `请求失败 (${elapsedSec}秒)`;
                 alert('请求异常: ' + e);
             } finally {
                 resetUIState();
@@ -599,6 +607,10 @@
             document.getElementById('startBtn').disabled = false;
             document.getElementById('startBtn').classList.remove('opacity-50', 'cursor-not-allowed');
             document.getElementById('stopBtn').disabled = true;
+            // 1.5秒后隐藏进度条
+            setTimeout(() => {
+                document.getElementById('progressBarContainer').classList.add('hidden');
+            }, 1500);
         }
 
         function updateStats(stats) {
@@ -792,7 +804,7 @@
 
         function escapeJs(str) {
             if (!str) return '';
-            return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+            return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         }
 
         function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }
