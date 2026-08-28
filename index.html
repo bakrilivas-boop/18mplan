@@ -8,212 +8,233 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'media',
             theme: {
                 extend: {
                     colors: {
-                        google: {
+                        brand: {
                             blue: '#1a73e8',
-                            hover: '#1557b0',
-                            green: '#1e8e3e',
-                            red: '#d93025'
+                            blueDark: '#1557b0',
+                            green: '#10b981',
+                            red: '#ef4444',
+                            amber: '#f59e0b'
                         }
                     }
                 }
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
         .font-code { font-family: 'JetBrains Mono', Consolas, monospace; }
+        .touch-btn {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
         .card-active {
-            border-left: 4px solid #10b981 !important;
-            background: linear-gradient(to right, rgba(236, 253, 245, 0.9), rgba(255, 255, 255, 0.98)) !important;
+            border-left: 5px solid #10b981 !important;
+            background-color: #064e3b33 !important;
+            border-color: #05966988;
         }
         .card-used {
-            border-left: 4px solid #f43f5e !important;
-            background: linear-gradient(to right, rgba(254, 242, 242, 0.9), rgba(255, 255, 255, 0.98)) !important;
+            border-left: 5px solid #f43f5e !important;
+            background-color: #4c051933 !important;
+            border-color: #e11d4888;
         }
         .card-other {
-            border-left: 4px solid #f59e0b !important;
-            background: linear-gradient(to right, rgba(255, 251, 235, 0.9), rgba(255, 255, 255, 0.98)) !important;
+            border-left: 5px solid #f59e0b !important;
+            background-color: #451a0333 !important;
+            border-color: #d9770688;
         }
     </style>
 </head>
-<body class="min-h-screen bg-slate-100 text-slate-800 flex flex-col antialiased">
+<body class="min-h-screen bg-slate-900 text-slate-100 flex flex-col antialiased">
 
-    <!-- 顶部导航栏 (手机端极简紧凑) -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-        <div class="max-w-4xl mx-auto px-3.5 py-2.5 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-xs">
+    <!-- 顶部导航栏 -->
+    <header class="bg-slate-800/90 backdrop-blur-md border-b border-slate-700 sticky top-0 z-30 shadow-md">
+        <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white font-black text-base shadow-sm">
                     1
                 </div>
                 <div>
-                    <h1 class="text-sm font-bold text-slate-900 leading-tight">Google One 链接检测</h1>
-                    <p class="text-[10px] text-slate-500 font-medium">Jio 18个月 AI Pro 活性与时效</p>
+                    <h1 class="text-base font-bold text-white tracking-wide">Google One 链接检测</h1>
+                    <p class="text-[11px] text-slate-400 font-medium">Jio 18个月 AI Pro 活性与时效</p>
                 </div>
             </div>
 
-            <!-- 右侧操作 -->
-            <div class="flex items-center space-x-1.5">
-                <button onclick="openHelpModal()" class="px-2 py-1 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition flex items-center space-x-0.5">
-                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span>教程</span>
+            <!-- 顶部按钮 -->
+            <div class="flex items-center space-x-2">
+                <button onclick="openHelpModal()" class="touch-btn px-3 py-1.5 text-xs font-semibold text-slate-300 bg-slate-700 hover:bg-slate-600 rounded-xl transition">
+                    📖 教程
                 </button>
-                <button onclick="openSettingsModal()" class="px-2.5 py-1 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-xs transition flex items-center space-x-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <span>配置</span>
+                <button onclick="openSettingsModal()" class="touch-btn px-3.5 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-xl shadow-md transition flex items-center space-x-1">
+                    <span>⚙️ 配置</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- 主体内容 -->
-    <main class="max-w-4xl mx-auto px-3.5 py-3 space-y-3 flex-1 w-full">
+    <!-- 主体区域 -->
+    <main class="max-w-2xl mx-auto px-4 py-4 space-y-4 flex-1 w-full">
         
-        <!-- 紧凑单行统计栏 (替代之前的5大卡片) -->
-        <div class="bg-white rounded-xl p-2.5 shadow-xs border border-slate-200 flex items-center justify-around text-center text-xs">
-            <div class="flex-1 border-r border-slate-100">
-                <div class="text-[10px] text-slate-400 font-medium">总链接</div>
-                <div id="statTotal" class="text-sm font-bold text-slate-800">0</div>
+        <!-- 统计面板 (大字号、清晰配色) -->
+        <div class="grid grid-cols-4 gap-2 bg-slate-800/80 rounded-2xl p-3 border border-slate-700/80 shadow-sm text-center">
+            <div class="py-1">
+                <div class="text-[11px] text-slate-400 font-medium">总链接</div>
+                <div id="statTotal" class="text-lg font-black text-white mt-0.5">0</div>
             </div>
-            <div class="flex-1 border-r border-slate-100">
-                <div class="text-[10px] text-emerald-600 font-medium">🟢 有效</div>
-                <div id="statActive" class="text-sm font-bold text-emerald-600">0</div>
+            <div class="py-1 border-l border-slate-700">
+                <div class="text-[11px] text-emerald-400 font-medium">🟢 有效</div>
+                <div id="statActive" class="text-lg font-black text-emerald-400 mt-0.5">0</div>
             </div>
-            <div class="flex-1 border-r border-slate-100">
-                <div class="text-[10px] text-rose-600 font-medium">🔴 已失效</div>
-                <div id="statUsed" class="text-sm font-bold text-rose-600">0</div>
+            <div class="py-1 border-l border-slate-700">
+                <div class="text-[11px] text-rose-400 font-medium">🔴 失效</div>
+                <div id="statUsed" class="text-lg font-black text-rose-400 mt-0.5">0</div>
             </div>
-            <div class="flex-1">
-                <div class="text-[10px] text-indigo-600 font-medium">⚡ 进度</div>
-                <div id="statProgressPercent" class="text-sm font-bold text-indigo-600">0%</div>
+            <div class="py-1 border-l border-slate-700">
+                <div class="text-[11px] text-indigo-400 font-medium">⚡ 进度</div>
+                <div id="statProgressPercent" class="text-lg font-black text-indigo-400 mt-0.5">0%</div>
             </div>
         </div>
 
         <!-- 进度条 -->
-        <div id="progressBarContainer" class="hidden w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-            <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-1.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+        <div id="progressBarContainer" class="hidden w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+            <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
         </div>
 
-        <!-- 输入卡片 -->
-        <div class="bg-white rounded-xl p-3 shadow-xs border border-slate-200 space-y-2.5">
-            <div class="flex items-center justify-between text-xs">
-                <span class="font-bold text-slate-800 flex items-center space-x-1">
-                    <span>待检测链接</span>
-                    <span id="inputCountBadge" class="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold">0条</span>
-                </span>
-                <div class="flex items-center space-x-1.5">
-                    <button onclick="fillSampleLinks()" class="px-2 py-0.5 text-[11px] font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded transition">
-                        示例
+        <!-- 输入控制卡片 -->
+        <div class="bg-slate-800 rounded-2xl p-4 border border-slate-700 shadow-md space-y-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm font-bold text-white">待检测链接列表</span>
+                    <span id="inputCountBadge" class="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-bold">0 条</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="fillSampleLinks()" class="px-3 py-1.5 text-xs font-semibold text-indigo-300 bg-indigo-900/50 hover:bg-indigo-900 rounded-lg transition">
+                        填入示例
                     </button>
-                    <button onclick="clearInput()" class="px-2 py-0.5 text-[11px] font-medium text-slate-500 bg-slate-100 hover:bg-slate-200 rounded transition">
+                    <button onclick="clearInput()" class="px-3 py-1.5 text-xs font-semibold text-slate-400 bg-slate-700 hover:bg-slate-600 rounded-lg transition">
                         清空
                     </button>
                 </div>
             </div>
 
-            <!-- 紧凑输入框 -->
-            <textarea id="linksInput" rows="3" placeholder="每行一条链接：&#10;https://serviceactivation.google.com/subscription/new/AQCpiI...&#10;https://serviceactivation.google.com/subscription/new/AQCPii..." 
-                class="w-full px-3 py-2 text-xs text-slate-800 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:bg-white focus:outline-none transition font-code"
+            <!-- 输入框 -->
+            <textarea id="linksInput" rows="4" placeholder="在此粘贴 Google One / Jio 激活链接（每行一条）&#10;https://serviceactivation.google.com/subscription/new/AQCpiI..." 
+                class="w-full px-3.5 py-3 text-sm text-slate-100 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition font-code"
                 oninput="updateInputCount()"></textarea>
 
-            <!-- 操作按钮 -->
-            <div class="flex items-center space-x-2 pt-0.5">
-                <button id="stopBtn" onclick="stopCheck()" disabled class="w-20 py-2 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 disabled:opacity-40 rounded-lg transition">
-                    停止
+            <!-- 操作大按钮 -->
+            <div class="flex items-center space-x-2.5 pt-1">
+                <button id="stopBtn" onclick="stopCheck()" disabled class="touch-btn w-24 text-sm font-bold text-rose-400 bg-rose-950/40 border border-rose-800/60 hover:bg-rose-900/50 disabled:opacity-30 rounded-xl transition">
+                    ⏹️ 停止
                 </button>
-                <button id="startBtn" onclick="startCheck()" class="flex-1 py-2 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-lg shadow-sm transition flex items-center justify-center space-x-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <button id="startBtn" onclick="startCheck()" class="touch-btn flex-1 text-base font-extrabold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 rounded-xl shadow-lg shadow-blue-600/30 active:scale-[0.98] transition flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     <span>开始批量检测</span>
                 </button>
             </div>
         </div>
 
-        <!-- 结果列表卡片容器 -->
-        <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden space-y-0">
-            <!-- 过滤栏 -->
-            <div class="p-2.5 border-b border-slate-100 flex items-center justify-between text-xs gap-1">
-                <div class="flex items-center space-x-1">
-                    <button onclick="setFilter('ALL')" id="filterBtn_ALL" class="filter-tab px-2.5 py-1 text-[11px] font-semibold rounded-md bg-blue-600 text-white transition">全部 (<span id="tabCountALL">0</span>)</button>
-                    <button onclick="setFilter('ACTIVE')" id="filterBtn_ACTIVE" class="filter-tab px-2.5 py-1 text-[11px] font-semibold rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 transition">🟢 有效 (<span id="tabCountACTIVE">0</span>)</button>
-                    <button onclick="setFilter('USED')" id="filterBtn_USED" class="filter-tab px-2.5 py-1 text-[11px] font-semibold rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 transition">🔴 失效 (<span id="tabCountUSED">0</span>)</button>
+        <!-- 结果展示区域 -->
+        <div class="bg-slate-800 rounded-2xl border border-slate-700 shadow-md overflow-hidden space-y-0">
+            <!-- 过滤栏与复制操作 -->
+            <div class="p-3 border-b border-slate-700/80 flex items-center justify-between gap-2">
+                <div class="flex items-center space-x-1.5">
+                    <button onclick="setFilter('ALL')" id="filterBtn_ALL" class="filter-tab touch-btn px-3 py-1.5 text-xs font-bold rounded-xl bg-blue-600 text-white transition">全部 (<span id="tabCountALL">0</span>)</button>
+                    <button onclick="setFilter('ACTIVE')" id="filterBtn_ACTIVE" class="filter-tab touch-btn px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-700 text-slate-300 hover:bg-slate-600 transition">🟢 有效 (<span id="tabCountACTIVE">0</span>)</button>
+                    <button onclick="setFilter('USED')" id="filterBtn_USED" class="filter-tab touch-btn px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-700 text-slate-300 hover:bg-slate-600 transition">🔴 失效 (<span id="tabCountUSED">0</span>)</button>
                 </div>
-                <button onclick="copyActiveLinks()" class="px-2.5 py-1 text-[11px] font-semibold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 rounded-md transition flex items-center space-x-1">
+                <button onclick="copyActiveLinks()" class="touch-btn px-3.5 py-1.5 text-xs font-bold text-emerald-300 bg-emerald-950/60 border border-emerald-700 hover:bg-emerald-900 rounded-xl transition shadow-xs flex items-center space-x-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                     <span>复制有效</span>
                 </button>
             </div>
 
-            <!-- 手机端卡片列表 -->
-            <div id="resultsContainer" class="p-2 space-y-2 max-h-[500px] overflow-y-auto">
-                <div class="py-10 text-center text-xs text-slate-400">
-                    暂无数据，在上方粘贴链接并点击「开始批量检测」
+            <!-- 卡片列表容器 -->
+            <div id="resultsContainer" class="p-3 space-y-3 max-h-[600px] overflow-y-auto">
+                <div class="py-12 text-center text-sm text-slate-500">
+                    暂无检测结果，请在上方输入链接并点击「开始批量检测」
                 </div>
             </div>
         </div>
     </main>
 
     <!-- 配置模态框 (Modal) -->
-    <div id="settingsModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3">
-        <div class="bg-white rounded-xl shadow-lg max-w-md w-full p-4 space-y-3 border border-slate-200">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-                <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-1">
+    <div id="settingsModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full p-5 space-y-4 border border-slate-700 text-slate-100">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center space-x-2">
                     <span>⚙️</span>
                     <span>配置 Google 账号 Cookie</span>
                 </h3>
-                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 p-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
-            <div class="space-y-2 text-xs">
+            <div class="space-y-3 text-xs">
                 <div>
-                    <label class="font-semibold text-slate-700 block mb-1">Google Cookie (自动保存在手机本地)</label>
-                    <textarea id="cfgCookie" rows="5" placeholder="请粘贴在电脑/浏览器中复制的完整 Cookie 字符串" class="w-full px-2.5 py-2 border border-slate-200 rounded-lg text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none font-code"></textarea>
+                    <label class="font-bold text-slate-200 block mb-1 text-xs">Google 账号 Cookie (保存在手机本地)</label>
+                    <textarea id="cfgCookie" rows="6" placeholder="请粘贴在电脑 Chrome 或手机浏览器中复制的 Google Cookie 字符串" class="w-full px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-slate-100 focus:ring-2 focus:ring-blue-500 focus:outline-none font-code"></textarea>
+                </div>
+                
+                <div class="p-3 rounded-xl bg-blue-950/40 border border-blue-800/60 text-blue-200 text-[11px] leading-relaxed">
+                    💡 提示：如果手机检测提示网络错误，说明公共代理受到跨域或网络限制。推荐将本项目免费一键导入 Vercel（使用完整 Python 服务端，速度极快且 0 报错）。
                 </div>
             </div>
 
-            <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
-                <button onclick="closeSettingsModal()" class="px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg">取消</button>
-                <button onclick="saveSettings()" class="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-xs">保存</button>
+            <div class="flex items-center justify-end space-x-2.5 pt-2 border-t border-slate-700">
+                <button onclick="closeSettingsModal()" class="touch-btn px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-700 rounded-xl">取消</button>
+                <button onclick="saveSettings()" class="touch-btn px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-xl shadow-md">保存配置</button>
             </div>
         </div>
     </div>
 
     <!-- 教程模态框 -->
-    <div id="helpModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3">
-        <div class="bg-white rounded-xl shadow-lg max-w-md w-full p-4 space-y-3 border border-slate-200">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-                <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-1">
+    <div id="helpModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full p-5 space-y-4 border border-slate-700 text-slate-100">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center space-x-2">
                     <span>📖</span>
-                    <span>手机如何填入 Cookie？</span>
+                    <span>Cookie 获取与使用指南</span>
                 </h3>
-                <button onclick="closeHelpModal()" class="text-slate-400 hover:text-slate-600 p-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <button onclick="closeHelpModal()" class="text-slate-400 hover:text-white p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
-            <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
-                <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-1 font-code text-[11px] text-slate-700">
-                    <div class="font-semibold text-blue-600">推荐方法：电脑复制发给手机</div>
-                    <div>1. 在电脑 Chrome 打开 one.google.com 登录；</div>
-                    <div>2. 按 F12 在 Network 中复制 Cookie；</div>
-                    <div>3. 发到手机微信/QQ并复制，点击右上角「配置」粘贴保存即可！</div>
+            <div class="text-xs text-slate-300 space-y-3 leading-relaxed">
+                <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700 space-y-2 text-xs">
+                    <div class="font-bold text-blue-400">第一步：复制电脑 Cookie</div>
+                    <div>在电脑 Chrome 打开 <span class="text-blue-400 underline">one.google.com</span> 登录账号 -> 按 F12 打开 Network -> 刷新页面 -> 复制第一个请求里的 <code>Cookie: ...</code>。</div>
+                    
+                    <div class="font-bold text-blue-400 mt-2">第二步：发到手机粘贴</div>
+                    <div>把 Cookie 发给手机微信/QQ并复制，点击右上角「⚙️ 配置」粘贴保存。</div>
                 </div>
             </div>
 
-            <div class="flex justify-end pt-2 border-t border-slate-100">
-                <button onclick="closeHelpModal()" class="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg">我明白了</button>
+            <div class="flex justify-end pt-2 border-t border-slate-700">
+                <button onclick="closeHelpModal()" class="touch-btn px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-xl">我知道了</button>
             </div>
         </div>
     </div>
 
-    <!-- 业务逻辑 JS -->
+    <!-- 底部状态栏 -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-3 text-center text-xs text-slate-500">
+        Google One & Jio 18-Month AI Pro Checker &copy; 2026
+    </footer>
+
+    <!-- 前端业务逻辑 JS (包含智能多网关代理与容错重试机制) -->
     <script>
         let userCookie = localStorage.getItem('g1_cookie') || '';
-        let proxyGateway = localStorage.getItem('g1_proxy_gateway') || '';
         let isStopRequested = false;
         let allResults = [];
         let currentFilter = 'ALL';
@@ -227,13 +248,13 @@
             userCookie = document.getElementById('cfgCookie').value.trim();
             localStorage.setItem('g1_cookie', userCookie);
             closeSettingsModal();
-            alert('Cookie 已成功保存！');
+            alert('Cookie 配置已成功保存！');
         }
 
         function updateInputCount() {
             const text = document.getElementById('linksInput').value.trim();
             const lines = text ? text.split('\n').map(l => l.trim()).filter(l => l.length > 0) : [];
-            document.getElementById('inputCountBadge').innerText = `${lines.length}条`;
+            document.getElementById('inputCountBadge').innerText = `${lines.length} 条`;
         }
 
         function fillSampleLinks() {
@@ -257,7 +278,7 @@
             const tokenMatch = url.match(/(?:subscription\/new\/|activate-plan\/subscription\/new\/)([A-Za-z0-9_\-+=]+)/);
             let token = tokenMatch ? tokenMatch[1] : (url.length > 20 ? url : '');
             let normalizedUrl = `https://one.google.com/activate-plan/subscription/new/${token}`;
-            let snippet = token.length > 16 ? `${token.slice(0, 7)}...${token.slice(-6)}` : (token || '-');
+            let snippet = token.length > 16 ? `${token.slice(0, 8)}...${token.slice(-6)}` : (token || '-');
             return { token, normalizedUrl, snippet };
         }
 
@@ -266,7 +287,7 @@
                 return {
                     index, raw_input: rawInput, token, token_snippet: snippet, url: targetUrl,
                     status: 'NEED_AUTH', status_badge: '🟡 需配置 Cookie',
-                    details: '请点击右上角「配置」填入 Google Cookie',
+                    details: '请点击右上角「⚙️ 配置」填入有效 Google Cookie',
                     plan_info: '需 Google Cookie', expire_deadline: '-', remaining_time: '-', duration_ms: durationMs
                 };
             }
@@ -298,9 +319,9 @@
                 if (html.includes(kw)) {
                     return {
                         index, raw_input: rawInput, token, token_snippet: snippet, url: targetUrl,
-                        status: 'USED', status_badge: '🔴 已失效 · 已使用',
+                        status: 'USED', status_badge: '🔴 已失效',
                         details: '此订阅链接已被兑换失效',
-                        plan_info: '已失效', expire_deadline: '已失效', remaining_time: '已失效', duration_ms: durationMs
+                        plan_info: '已失效 (已使用)', expire_deadline: '已失效', remaining_time: '已失效', duration_ms: durationMs
                     };
                 }
             }
@@ -311,7 +332,7 @@
                     return {
                         index, raw_input: rawInput, token, token_snippet: snippet, url: targetUrl,
                         status: 'ACTIVE', status_badge: '🟢 有效 · 可激活',
-                        details: `链接有效！可免费畅享 18 个月 (5TB)`,
+                        details: `链接有效！可免费畅享 18 个月 (5TB 存储)`,
                         plan_info: 'Jio 18个月 AI Pro (5TB)', expire_deadline: expireDeadline, remaining_time: remainingTime, duration_ms: durationMs
                     };
                 }
@@ -328,10 +349,43 @@
 
             return {
                 index, raw_input: rawInput, token, token_snippet: snippet, url: targetUrl,
-                status: 'ERROR', status_badge: '❌ 异常',
-                details: '未能识别页面，请确认 Cookie 是否有效',
+                status: 'ERROR', status_badge: '❌ 未识别',
+                details: '未匹配到特征，请确认 Cookie 是否有效',
                 plan_info: '-', expire_deadline: '-', remaining_time: '-', duration_ms: durationMs
             };
+        }
+
+        // 智能多路由代理探测 (解决 Failed to fetch)
+        async function fetchLinkWithFallback(targetUrl) {
+            const cleanCookie = userCookie ? userCookie.trim() : '';
+            
+            // 路由 1: Allorigins 代理
+            try {
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+                const r = await fetch(proxyUrl, { headers: { 'Accept': 'application/json' } });
+                const json = await r.json();
+                if (json && json.contents) {
+                    return { html: json.contents, finalUrl: json.status?.url || targetUrl };
+                }
+            } catch (e) {}
+
+            // 路由 2: Codeft CORS 代理
+            try {
+                const proxyUrl2 = `https://cors.eu.org/${targetUrl}`;
+                const r2 = await fetch(proxyUrl2, {
+                    headers: cleanCookie ? { 'cookie': cleanCookie } : {}
+                });
+                const txt = await r2.text();
+                if (txt && txt.length > 200) {
+                    return { html: txt, finalUrl: r2.url };
+                }
+            } catch (e) {}
+
+            // 路由 3: 直连代理
+            const proxyUrl3 = `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`;
+            const r3 = await fetch(proxyUrl3);
+            const txt3 = await r3.text();
+            return { html: txt3, finalUrl: r3.url };
         }
 
         async function fetchLink(rawInput, index) {
@@ -339,32 +393,23 @@
             if (!token) {
                 return {
                     index, raw_input: rawInput, token: '', token_snippet: '-', url: '',
-                    status: 'INVALID', status_badge: '⚠️ 无效', details: '无法识别有效链接', plan_info: '-', expire_deadline: '-', remaining_time: '-', duration_ms: 0
+                    status: 'INVALID', status_badge: '⚠️ 无效', details: '无法识别有效激活链接', plan_info: '-', expire_deadline: '-', remaining_time: '-', duration_ms: 0
                 };
             }
 
             const startTime = Date.now();
-            const gateway = proxyGateway.trim() || 'https://corsproxy.io/?url=';
 
             try {
-                let resHtml = '';
-                let finalUrl = '';
-                const reqUrl = gateway + encodeURIComponent(normalizedUrl);
-                const resp = await fetch(reqUrl, {
-                    headers: {
-                        'x-requested-with': 'XMLHttpRequest',
-                        ...(userCookie ? { 'cookie': userCookie } : {})
-                    }
-                });
-                resHtml = await resp.text();
-                finalUrl = resp.url;
+                const { html, finalUrl } = await fetchLinkWithFallback(normalizedUrl);
                 const dur = Date.now() - startTime;
-                return analyzeHtml(rawInput, token, snippet, normalizedUrl, resHtml, finalUrl, dur, index);
+                return analyzeHtml(rawInput, token, snippet, normalizedUrl, html, finalUrl, dur, index);
             } catch (err) {
                 const dur = Date.now() - startTime;
                 return {
                     index, raw_input: rawInput, token, token_snippet: snippet, url: normalizedUrl,
-                    status: 'ERROR', status_badge: '❌ 异常', details: `网络异常: ${err.message}`, plan_info: '-', expire_deadline: '-', remaining_time: '-', duration_ms: dur
+                    status: 'ERROR', status_badge: '❌ 网络限制',
+                    details: `网络请求受限 (${err.message})。推荐使用电脑端一键启动或部署 Vercel 免费无限制运行`,
+                    plan_info: '-', expire_deadline: '-', remaining_time: '-', duration_ms: dur
                 };
             }
         }
@@ -378,7 +423,7 @@
 
             allResults = [];
             renderCards();
-            updateStats(lines.length, 0, 0, 0);
+            updateStats(lines.length, 0, 0);
 
             isStopRequested = false;
             document.getElementById('startBtn').disabled = true;
@@ -400,7 +445,7 @@
                 completed += chunk.length;
 
                 renderCards();
-                updateStatsFromResults(lines.length);
+                updateStats(lines.length, allResults.filter(r => r.status === 'ACTIVE').length, allResults.filter(r => r.status === 'USED').length);
 
                 const pct = Math.round((completed / lines.length) * 100);
                 document.getElementById('progressBar').style.width = pct + '%';
@@ -414,12 +459,6 @@
 
         function stopCheck() { isStopRequested = true; }
 
-        function updateStatsFromResults(total) {
-            const active = allResults.filter(r => r.status === 'ACTIVE').length;
-            const used = allResults.filter(r => r.status === 'USED').length;
-            updateStats(total, active, used);
-        }
-
         function updateStats(total, active, used) {
             document.getElementById('statTotal').innerText = total;
             document.getElementById('statActive').innerText = active;
@@ -432,10 +471,10 @@
         function setFilter(filter) {
             currentFilter = filter;
             document.querySelectorAll('.filter-tab').forEach(b => {
-                b.className = 'filter-tab px-2.5 py-1 text-[11px] font-semibold rounded-md bg-slate-100 text-slate-700 transition';
+                b.className = 'filter-tab touch-btn px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-700 text-slate-300 hover:bg-slate-600 transition';
             });
             const activeBtn = document.getElementById(`filterBtn_${filter}`);
-            if (activeBtn) activeBtn.className = 'filter-tab px-2.5 py-1 text-[11px] font-semibold rounded-md bg-blue-600 text-white transition';
+            if (activeBtn) activeBtn.className = 'filter-tab touch-btn px-3 py-1.5 text-xs font-bold rounded-xl bg-blue-600 text-white transition';
             renderCards();
         }
 
@@ -446,59 +485,59 @@
             else if (currentFilter === 'USED') filtered = allResults.filter(r => r.status === 'USED');
 
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="py-8 text-center text-xs text-slate-400">${allResults.length === 0 ? '暂无数据' : '当前筛选无结果'}</div>`;
+                container.innerHTML = `<div class="py-12 text-center text-sm text-slate-500">${allResults.length === 0 ? '暂无检测结果，请在上方输入链接并点击「开始批量检测」' : '当前筛选条件暂无数据'}</div>`;
                 return;
             }
 
             let html = '';
             filtered.forEach((r) => {
-                let cardBorderClass = 'card-other';
-                let statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-500 text-white">异常</span>`;
+                let cardClass = 'card-other';
+                let statusBadge = `<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-slate-700 text-slate-300">异常</span>`;
                 let remainBadge = '';
 
                 if (r.status === 'ACTIVE') {
-                    cardBorderClass = 'card-active';
-                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 text-white animate-pulse">🟢 有效</span>`;
-                    remainBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">⏳ ${escapeHtml(r.remaining_time || '有效')}</span>`;
+                    cardClass = 'card-active';
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-500 text-slate-950 shadow-sm animate-pulse">🟢 有效 · 可激活</span>`;
+                    remainBadge = `<span class="px-2 py-0.5 rounded-md text-xs font-bold bg-emerald-900/80 text-emerald-300 border border-emerald-700">⏳ ${escapeHtml(r.remaining_time || '有效')}</span>`;
                 } else if (r.status === 'USED') {
-                    cardBorderClass = 'card-used';
-                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-600 text-white">🔴 已失效</span>`;
-                    remainBadge = `<span class="text-[10px] text-rose-500 font-semibold">已兑换</span>`;
+                    cardClass = 'card-used';
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-rose-500 text-white shadow-sm">🔴 已失效</span>`;
+                    remainBadge = `<span class="text-xs text-rose-400 font-bold">已被兑换</span>`;
                 } else if (r.status === 'NEED_AUTH') {
-                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white">需Cookie</span>`;
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-amber-500 text-slate-950">需Cookie</span>`;
                 }
 
                 const snippet = r.token_snippet || '-';
                 const fullUrl = r.url || r.raw_input || '';
 
                 html += `
-                    <div class="p-3 rounded-lg border border-slate-200/80 shadow-2xs space-y-1.5 ${cardBorderClass}">
+                    <div class="p-3.5 rounded-2xl border border-slate-700/80 shadow-md space-y-2.5 ${cardClass}">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-1.5">
-                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold font-code bg-slate-200 text-slate-700">#${r.index}</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-1 rounded-lg text-xs font-black font-code bg-slate-800 text-slate-200 border border-slate-700">#${r.index}</span>
                                 ${statusBadge}
                                 ${remainBadge}
                             </div>
-                            <span class="text-[10px] text-slate-400 font-code">${r.duration_ms || 0}ms</span>
+                            <span class="text-xs text-slate-400 font-code">${r.duration_ms || 0}ms</span>
                         </div>
 
-                        <div class="flex items-center justify-between text-xs pt-0.5">
-                            <span class="font-code text-[11px] font-semibold text-slate-800 bg-white/80 px-1.5 py-0.5 rounded border border-slate-200">
+                        <div class="flex items-center justify-between gap-2 pt-0.5">
+                            <div class="flex-1 font-code text-xs font-bold text-slate-100 bg-slate-900/90 px-2.5 py-2 rounded-xl border border-slate-700 truncate">
                                 🔑 ${escapeHtml(snippet)}
-                            </span>
-                            <div class="flex items-center space-x-1.5">
-                                <button onclick="copyToClipboard('${escapeJs(fullUrl)}')" class="px-2 py-1 text-[11px] font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded transition">
+                            </div>
+                            <div class="flex items-center space-x-2 shrink-0">
+                                <button onclick="copyToClipboard('${escapeJs(fullUrl)}')" class="touch-btn px-3 py-1.5 text-xs font-bold text-blue-300 bg-blue-900/60 border border-blue-700 hover:bg-blue-800 rounded-xl transition">
                                     复制
                                 </button>
-                                <a href="${escapeHtml(fullUrl)}" target="_blank" class="px-2 py-1 text-[11px] font-semibold text-slate-700 bg-white hover:bg-slate-100 rounded border border-slate-200 transition">
+                                <a href="${escapeHtml(fullUrl)}" target="_blank" class="touch-btn px-3.5 py-1.5 text-xs font-bold text-white bg-slate-700 border border-slate-600 hover:bg-slate-600 rounded-xl transition">
                                     打开 ↗
                                 </a>
                             </div>
                         </div>
 
-                        <div class="text-[11px] text-slate-600 flex items-center justify-between pt-0.5">
-                            <span>${escapeHtml(r.details || '')}</span>
-                            ${r.expire_deadline && r.expire_deadline !== '-' ? `<span class="text-[10px] text-emerald-700 font-medium">${escapeHtml(r.expire_deadline)}</span>` : ''}
+                        <div class="text-xs text-slate-300 flex items-center justify-between pt-0.5">
+                            <span class="font-medium">${escapeHtml(r.details || '')}</span>
+                            ${r.expire_deadline && r.expire_deadline !== '-' ? `<span class="text-xs text-emerald-400 font-bold">${escapeHtml(r.expire_deadline)}</span>` : ''}
                         </div>
                     </div>
                 `;
@@ -508,12 +547,12 @@
 
         function copyActiveLinks() {
             const actives = allResults.filter(r => r.status === 'ACTIVE');
-            if (actives.length === 0) { alert('没有有效链接！'); return; }
+            if (actives.length === 0) { alert('当前没有检测出有效激活链接！'); return; }
             const textLines = actives.map(r => `第 ${r.index} 条 (${r.remaining_time || '有效'}): ${r.url || r.raw_input}`).join('\n');
-            navigator.clipboard.writeText(textLines).then(() => alert(`已复制 ${actives.length} 条有效链接！`));
+            navigator.clipboard.writeText(textLines).then(() => alert(`已成功复制 ${actives.length} 条有效链接！`));
         }
 
-        function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('链接已复制！')); }
+        function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => alert('链接已复制到剪贴板！')); }
         function escapeHtml(str) { if (!str) return ''; return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
         function escapeJs(str) { if (!str) return ''; return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"'); }
         function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }
