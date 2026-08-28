@@ -38,31 +38,20 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(226, 232, 240, 0.9);
         }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .row-active {
-            background-color: rgba(236, 253, 245, 0.85) !important;
+            background-color: rgba(236, 253, 245, 0.95) !important;
             border-left: 4px solid #10b981 !important;
         }
         .row-used {
-            background-color: rgba(254, 242, 242, 0.85) !important;
+            background-color: rgba(254, 242, 242, 0.95) !important;
             border-left: 4px solid #f43f5e !important;
         }
         .row-other {
-            background-color: rgba(255, 251, 235, 0.85) !important;
+            background-color: rgba(255, 251, 235, 0.95) !important;
             border-left: 4px solid #f59e0b !important;
         }
     </style>
@@ -77,7 +66,7 @@
                     1
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-900 leading-tight flex items-center space-x-2">
+                    <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight flex items-center space-x-2">
                         <span>Google One 激活链接活性检测器</span>
                         <span class="text-xs px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 font-semibold">带时效倒计时</span>
                     </h1>
@@ -88,7 +77,7 @@
             <!-- 右侧快捷状态与设置 -->
             <div class="flex items-center space-x-3">
                 <div id="cookieBadge" class="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                    <span id="cookieBadgeDot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
                     <span id="cookieBadgeText">正在检查Cookie...</span>
                 </div>
                 
@@ -97,7 +86,7 @@
                     <span>Cookie获取教程</span>
                 </button>
 
-                <button onclick="openSettingsModal()" class="px-3.5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition duration-150 flex items-center space-x-1.5">
+                <button onclick="openSettingsModal()" class="px-3.5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition duration-150 flex items-center space-x-1.5">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     <span>配置中心</span>
                 </button>
@@ -197,7 +186,7 @@
             <!-- 控制按钮 -->
             <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
                 <div class="text-xs text-slate-500 flex items-center space-x-2">
-                    <span>💡 已支持实时计算 **具体剩余失效时间（如：还剩 59 天 4 小时）** 与 **截止日期**！</span>
+                    <span>💡 结果将严格按输入顺序排版，并显示 **具体剩余失效时间（如：还剩 59 天 4 小时）**！</span>
                 </div>
 
                 <div class="flex items-center space-x-3">
@@ -207,7 +196,7 @@
 
                     <button id="startBtn" onclick="startBatchCheck()" class="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl shadow-md hover:shadow-lg transition duration-150 flex items-center space-x-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        <span>🚀 开始批量检测 (时效倒计时)</span>
+                        <span>🚀 开始批量检测 (计算时效)</span>
                     </button>
                 </div>
             </div>
@@ -286,21 +275,20 @@
             <div class="space-y-4 text-sm">
                 <!-- 网络代理设置 -->
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">网络代理 (在 Vercel 在线版请留空直连)</label>
+                    <label class="block font-semibold text-slate-700 mb-1">网络代理 (在线版请留空)</label>
                     <input type="text" id="cfgProxy" placeholder="在 Vercel 在线版请留空！(仅本地电脑填 http://127.0.0.1:7890)" class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none font-code">
-                    <p class="text-xs text-slate-400 mt-1">💡 提示：Vercel 部署在海外云端，<b>无需配置代理（请清空输入框）</b>；只有在本地电脑端运行时才需填 127.0.0.1:7890。</p>
+                    <p class="text-xs text-slate-400 mt-1">💡 提示：Vercel 部署在海外，<b>无需配置代理（请留空）</b>；本地电脑运行时才需填 127.0.0.1:7890。</p>
                 </div>
-
 
                 <!-- Google Cookie 设置 -->
                 <div>
                     <div class="flex items-center justify-between mb-1">
-                        <label class="font-semibold text-slate-700">Google 账号 Cookie</label>
+                        <label class="font-semibold text-slate-700">Google 账号 Cookie (已自动持久保存在浏览器)</label>
                         <button onclick="testCurrentCookie()" id="btnTestCookie" class="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center space-x-1">
                             <span>🔍 测试 Cookie 连通性</span>
                         </button>
                     </div>
-                    <textarea id="cfgCookie" rows="4" placeholder="请粘贴浏览器中登录的 Google Cookie（支持直接复制 Cookie 标头完整字符串或 __Secure-1PSID / SID 等）" class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none font-code"></textarea>
+                    <textarea id="cfgCookie" rows="5" placeholder="请粘贴浏览器中登录的 Google Cookie（支持直接复制 Cookie 标头完整字符串或 __Secure-1PSID / SID 等）" class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none font-code"></textarea>
                     <div id="cookieTestResult" class="hidden mt-2 p-2.5 rounded-lg text-xs"></div>
                 </div>
 
@@ -309,12 +297,12 @@
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">并发检测线程数</label>
                         <input type="number" id="cfgThreads" min="1" max="20" class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                        <span class="text-xs text-slate-400">推荐 5~10</span>
+                        <span class="text-xs text-slate-400">推荐 8~10 (高速并发)</span>
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">单请求超时 (秒)</label>
-                        <input type="number" id="cfgTimeout" min="5" max="60" class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                        <span class="text-xs text-slate-400">推荐 15 秒</span>
+                        <input type="number" id="cfgTimeout" min="3" max="30" class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <span class="text-xs text-slate-400">推荐 10 秒</span>
                     </div>
                 </div>
             </div>
@@ -340,24 +328,18 @@
             </div>
 
             <div class="text-sm text-slate-600 space-y-3 leading-relaxed">
-                <p class="font-medium text-slate-800">由于 Google 激活链接必须在登录状态下才能识别套餐详情与活性状态，因此需要提供您的 Google Cookie：</p>
-                
                 <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2 font-code text-xs text-slate-700">
                     <div class="font-semibold text-blue-600">步骤一：打开 Chrome 浏览器</div>
-                    <div>在 Chrome 中登录您的任一 Google 账号并打开 <a href="https://one.google.com" target="_blank" class="text-blue-600 underline">https://one.google.com</a></div>
+                    <div>在 Chrome 中登录您的 Google 账号并打开 <a href="https://one.google.com" target="_blank" class="text-blue-600 underline">https://one.google.com</a></div>
                     
                     <div class="font-semibold text-blue-600 mt-2">步骤二：按 F12 打开开发者工具</div>
-                    <div>点击顶部 <strong>「网络 (Network)」</strong> 选项卡，刷新页面，点击左侧第一个 <strong>one.google.com</strong> 或 <strong>app?awwd=...</strong> 请求。</div>
+                    <div>点击顶部 <strong>「网络 (Network)」</strong> 选项卡，刷新页面，点击左侧列表中第一个 <strong>one.google.com</strong> 或 <strong>app?awwd=...</strong> 请求。</div>
                     
                     <div class="font-semibold text-blue-600 mt-2">步骤三：复制 Cookie 标头</div>
                     <div>在右侧 <strong>「标头 (Headers)」 -> 「请求标头 (Request Headers)」</strong> 中找到 <code>Cookie: ...</code>，鼠标右键点击并复制该值。</div>
                     
                     <div class="font-semibold text-blue-600 mt-2">步骤四：粘贴并保存</div>
-                    <div>回到本工具，点击右上角 <strong>「配置中心」</strong>，粘贴到 Cookie 文本框中，点击 <strong>「测试连通性」</strong> 成功后保存即可！</div>
-                </div>
-
-                <div class="p-3 bg-amber-50 rounded-xl text-amber-800 text-xs border border-amber-200">
-                    💡 提示：Cookie 仅保存在您本地的 <code>config.json</code> 中，用于请求 Google 官方激活接口判定链接状态，不会泄露给任何第三方。
+                    <div>回到本工具，点击右上角 <strong>「配置中心」</strong>，粘贴到 Cookie 文本框中，点击 <strong>「保存配置」</strong> 即可永久生效！</div>
                 </div>
             </div>
 
@@ -372,70 +354,90 @@
         Google One & Jio 18-Month Gemini AI Pro Activation Link Activity Checker &copy; 2026
     </footer>
 
-    <!-- 前端业务逻辑 JS -->
+    <!-- 前端业务逻辑 JS (双重持久化: LocalStorage + Serverless payload) -->
     <script>
-        let globalConfig = {};
-        let currentTaskId = null;
-        let checkPollingTimer = null;
+        let cachedCookie = localStorage.getItem('g1_cookie') || '';
+        let cachedProxy = localStorage.getItem('g1_proxy') || '';
+        let cachedThreads = parseInt(localStorage.getItem('g1_threads') || '8');
+        let cachedTimeout = parseInt(localStorage.getItem('g1_timeout') || '10');
+
         let allResults = [];
         let currentFilter = 'ALL';
 
-        // 页面初始化
         window.addEventListener('DOMContentLoaded', () => {
-            loadConfig();
-            updateInputCount();
+            initUI();
         });
 
-        async function loadConfig() {
-            try {
-                const res = await fetch('/api/config');
-                const data = await res.json();
-                if (data.success) {
-                    globalConfig = data.config;
-                    document.getElementById('cfgProxy').value = globalConfig.proxy || '';
-                    document.getElementById('cfgCookie').value = globalConfig.cookie || '';
-                    document.getElementById('cfgThreads').value = globalConfig.threads || 5;
-                    document.getElementById('cfgTimeout').value = globalConfig.timeout || 15;
+        async function initUI() {
+            // 先尝试从本地 LocalStorage 加载
+            document.getElementById('cfgCookie').value = cachedCookie;
+            document.getElementById('cfgProxy').value = cachedProxy;
+            document.getElementById('cfgThreads').value = cachedThreads;
+            document.getElementById('cfgTimeout').value = cachedTimeout;
 
-                    const cookieBadge = document.getElementById('cookieBadge');
-                    const cookieBadgeText = document.getElementById('cookieBadgeText');
-                    if (globalConfig.cookie && globalConfig.cookie.trim().length > 10) {
-                        cookieBadge.className = 'hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200';
-                        cookieBadgeText.innerText = 'Google Cookie 已就绪 ✅';
-                    } else {
-                        cookieBadge.className = 'hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200';
-                        cookieBadgeText.innerText = '未配置 Google Cookie (请配置)';
+            updateCookieBadge();
+            updateInputCount();
+
+            // 如果本地没有 Cookie，尝试从服务端获取一次
+            if (!cachedCookie) {
+                try {
+                    const res = await fetch('/api/config');
+                    const data = await res.json();
+                    if (data.success && data.config.cookie) {
+                        cachedCookie = data.config.cookie;
+                        localStorage.setItem('g1_cookie', cachedCookie);
+                        document.getElementById('cfgCookie').value = cachedCookie;
+                        updateCookieBadge();
                     }
-                }
-            } catch (e) {
-                console.error('Failed to load config', e);
+                } catch (e) {}
+            }
+        }
+
+        function updateCookieBadge() {
+            const cookieBadge = document.getElementById('cookieBadge');
+            const cookieBadgeText = document.getElementById('cookieBadgeText');
+            const cookieBadgeDot = document.getElementById('cookieBadgeDot');
+
+            if (cachedCookie && cachedCookie.trim().length > 10) {
+                cookieBadge.className = 'hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200';
+                cookieBadgeDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+                cookieBadgeText.innerText = 'Google Cookie 已就绪 ✅';
+            } else {
+                cookieBadge.className = 'hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200';
+                cookieBadgeDot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
+                cookieBadgeText.innerText = '未配置 Google Cookie (请配置)';
             }
         }
 
         async function saveSettings() {
-            const newCfg = {
-                proxy: document.getElementById('cfgProxy').value.trim(),
-                cookie: document.getElementById('cfgCookie').value.trim(),
-                threads: parseInt(document.getElementById('cfgThreads').value) || 5,
-                timeout: parseInt(document.getElementById('cfgTimeout').value) || 15
-            };
+            cachedCookie = document.getElementById('cfgCookie').value.trim();
+            cachedProxy = document.getElementById('cfgProxy').value.trim();
+            cachedThreads = parseInt(document.getElementById('cfgThreads').value) || 8;
+            cachedTimeout = parseInt(document.getElementById('cfgTimeout').value) || 10;
 
+            // 1. 立即持久化保存在本地浏览器的 LocalStorage
+            localStorage.setItem('g1_cookie', cachedCookie);
+            localStorage.setItem('g1_proxy', cachedProxy);
+            localStorage.setItem('g1_threads', cachedThreads);
+            localStorage.setItem('g1_timeout', cachedTimeout);
+
+            // 2. 同步提交给服务端保存
             try {
-                const res = await fetch('/api/config', {
+                await fetch('/api/config', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newCfg)
+                    body: JSON.stringify({
+                        cookie: cachedCookie,
+                        proxy: cachedProxy,
+                        threads: cachedThreads,
+                        timeout: cachedTimeout
+                    })
                 });
-                const data = await res.json();
-                if (data.success) {
-                    globalConfig = data.config;
-                    closeSettingsModal();
-                    loadConfig();
-                    alert('配置已成功保存！');
-                }
-            } catch (e) {
-                alert('保存配置失败: ' + e);
-            }
+            } catch (e) {}
+
+            updateCookieBadge();
+            closeSettingsModal();
+            alert('配置已成功保存！');
         }
 
         async function testCurrentCookie() {
@@ -444,9 +446,14 @@
             const resDiv = document.getElementById('cookieTestResult');
             const btn = document.getElementById('btnTestCookie');
 
+            if (!cookie) {
+                alert('请先输入 Google Cookie！');
+                return;
+            }
+
             btn.innerText = '⏳ 测试中...';
             resDiv.className = 'mt-2 p-2.5 rounded-lg text-xs bg-slate-100 text-slate-700 block';
-            resDiv.innerText = '正在向 Google One 发送测试探测请求...';
+            resDiv.innerText = '正在向 Google One 发送连通性探测请求...';
 
             try {
                 const res = await fetch('/api/test-cookie', {
@@ -518,7 +525,7 @@
             event.target.value = '';
         }
 
-        // 开始批量检测
+        // 开始批量检测 (极速直连并发)
         async function startBatchCheck() {
             const text = document.getElementById('linksInput').value.trim();
             if (!text) {
@@ -532,6 +539,14 @@
                 return;
             }
 
+            if (!cachedCookie) {
+                const proceed = confirm('您尚未配置 Google 账号 Cookie，检测可能无法识别套餐详情。是否立即前往配置？');
+                if (proceed) {
+                    openSettingsModal();
+                    return;
+                }
+            }
+
             // 重置状态与结果
             allResults = [];
             renderTable();
@@ -539,74 +554,44 @@
 
             document.getElementById('startBtn').disabled = true;
             document.getElementById('startBtn').classList.add('opacity-50', 'cursor-not-allowed');
-            document.getElementById('stopBtn').disabled = false;
             document.getElementById('progressBarContainer').classList.remove('hidden');
-            document.getElementById('statStatusText').innerText = '正在按序检测...';
+            document.getElementById('progressBar').style.width = '30%';
+            document.getElementById('statStatusText').innerText = '正在高并发秒级检测中...';
 
             try {
-                const res = await fetch('/api/check-batch-start', {
+                // 使用极速同步接口，直接将 Cookie 和链接一次性发给服务端并行检测
+                const res = await fetch('/api/check-batch-sync', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ links: lines })
+                    body: JSON.stringify({
+                        links: lines,
+                        cookie: cachedCookie,
+                        proxy: cachedProxy,
+                        threads: cachedThreads,
+                        timeout: cachedTimeout
+                    })
                 });
                 const data = await res.json();
-                if (data.success) {
-                    currentTaskId = data.task_id;
-                    pollStatus();
+                if (data.success && data.results) {
+                    allResults = data.results;
+                    allResults.sort((a, b) => (a.index || 0) - (b.index || 0));
+                    renderTable();
+                    updateStats(data.stats);
+
+                    document.getElementById('progressBar').style.width = '100%';
+                    document.getElementById('statProgressPercent').innerText = '100%';
+                    document.getElementById('statStatusText').innerText = '检测完成 ✅ (已按序排列)';
                 } else {
-                    alert('启动检测失败: ' + data.error);
-                    resetUIState();
+                    alert('检测返回异常: ' + (data.error || '未知错误'));
                 }
             } catch (e) {
                 alert('请求异常: ' + e);
+            } finally {
                 resetUIState();
             }
         }
 
-        function pollStatus() {
-            if (checkPollingTimer) clearInterval(checkPollingTimer);
-            let offset = 0;
-
-            checkPollingTimer = setInterval(async () => {
-                if (!currentTaskId) return;
-                try {
-                    const res = await fetch(`/api/check-batch-status/${currentTaskId}?offset=${offset}`);
-                    const data = await res.json();
-                    if (data.success) {
-                        if (data.new_results && data.new_results.length > 0) {
-                            allResults.push(...data.new_results);
-                            allResults.sort((a, b) => (a.index || 0) - (b.index || 0));
-                            offset = data.next_offset;
-                            renderTable();
-                        }
-
-                        updateStats(data.stats);
-
-                        const pct = data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0;
-                        document.getElementById('progressBar').style.width = pct + '%';
-                        document.getElementById('statProgressPercent').innerText = pct + '%';
-
-                        if (!data.is_running) {
-                            clearInterval(checkPollingTimer);
-                            resetUIState();
-                            document.getElementById('statStatusText').innerText = '检测完成 ✅';
-                        }
-                    }
-                } catch (e) {
-                    console.error('Polling error', e);
-                }
-            }, 800);
-        }
-
-        async function stopBatchCheck() {
-            if (!currentTaskId) return;
-            try {
-                await fetch(`/api/check-batch-stop/${currentTaskId}`, { method: 'POST' });
-                document.getElementById('statStatusText').innerText = '已中止 ⏹️';
-            } catch (e) {
-                console.error(e);
-            }
-            if (checkPollingTimer) clearInterval(checkPollingTimer);
+        function stopBatchCheck() {
             resetUIState();
         }
 
@@ -628,7 +613,6 @@
             document.getElementById('rateActive').innerText = activePct + '%';
             document.getElementById('rateUsed').innerText = usedPct + '%';
 
-            // 更新选项卡徽章
             document.getElementById('tabCountALL').innerText = allResults.length;
             document.getElementById('tabCountACTIVE').innerText = allResults.filter(r => r.status === 'ACTIVE').length;
             document.getElementById('tabCountUSED').innerText = allResults.filter(r => r.status === 'USED').length;
@@ -770,7 +754,7 @@
             const blob = new Blob([textLines], { type: 'text/plain;charset=utf-8' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `GoogleOne_Active_Links_${formatDateTime()}.txt`;
+            a.download = `GoogleOne_Active_Links.txt`;
             a.click();
         }
 
@@ -788,7 +772,7 @@
                 const blob = await res.blob();
                 const a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);
-                a.download = `GoogleOne_Jio_Detection_Report_${formatDateTime()}.xlsx`;
+                a.download = `GoogleOne_Detection_Report.xlsx`;
                 a.click();
             } catch (e) {
                 alert('导出 Excel 失败: ' + e);
@@ -809,15 +793,6 @@
         function escapeJs(str) {
             if (!str) return '';
             return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
-        }
-
-        function formatDateTime() {
-            const d = new Date();
-            return d.getFullYear() +
-                String(d.getMonth() + 1).padStart(2, '0') +
-                String(d.getDate()).padStart(2, '0') + '_' +
-                String(d.getHours()).padStart(2, '0') +
-                String(d.getMinutes()).padStart(2, '0');
         }
 
         function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }

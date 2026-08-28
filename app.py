@@ -114,6 +114,51 @@ def api_check_batch_start():
     return jsonify({"success": True, "task_id": task_id, "total": len(links)})
 
 
+@app.route('/api/check-batch-sync', methods=['POST'])
+def api_check_batch_sync():
+    data = request.get_json() or {}
+    links = data.get("links", [])
+    if not links:
+        return jsonify({"success": False, "error": "没有提供待检测的链接"}), 400
+
+    cfg = load_config()
+    req_cookie = data.get("cookie")
+    if req_cookie and req_cookie.strip():
+        cfg["cookie"] = req_cookie.strip()
+
+    req_proxy = data.get("proxy")
+    if req_proxy is not None:
+        cfg["proxy"] = req_proxy.strip()
+
+    threads = int(data.get("threads") or cfg.get("threads", 8))
+    timeout = int(data.get("timeout") or cfg.get("timeout", 10))
+
+    batch_checker = BatchChecker(
+        proxy=cfg.get("proxy"),
+        cookie=cfg.get("cookie"),
+        max_workers=threads,
+        timeout=timeout
+    )
+
+    results = batch_checker.run(links)
+
+    stats = {
+        "total": len(links),
+        "completed": len(results),
+        "active": sum(1 for r in results if r.get("status") == STATUS_ACTIVE),
+        "used": sum(1 for r in results if r.get("status") == STATUS_USED),
+        "invalid": sum(1 for r in results if r.get("status") == STATUS_INVALID),
+        "need_auth": sum(1 for r in results if r.get("status") == STATUS_NEED_AUTH),
+        "error": sum(1 for r in results if r.get("status") == STATUS_ERROR)
+    }
+
+    return jsonify({
+        "success": True,
+        "results": results,
+        "stats": stats
+    })
+
+
 @app.route("/api/check-batch-status/<task_id>", methods=["GET"])
 def api_check_batch_status(task_id):
     if task_id not in tasks:
