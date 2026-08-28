@@ -530,7 +530,7 @@ class LinkChecker:
             "status": STATUS_ERROR,
             "status_label": STATUS_LABELS[STATUS_ERROR]["text"],
             "status_badge": STATUS_LABELS[STATUS_ERROR]["badge"],
-            "details": f"返回页面未匹配到特征，HTTP状态码: {status_code}",
+            "details": f"返回页面未匹配到特征，HTTP状态码: {status_code}，最终URL: {final_url[:80]}",
             "plan_info": "未知状态",
             "expire_deadline": "-",
             "remaining_time": "-",
