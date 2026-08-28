@@ -12,6 +12,16 @@ from typing import Dict, List, Optional, Callable
 
 import requests
 
+def get_effective_proxy(proxy_str):
+    if not proxy_str:
+        return None
+    proxy_str = proxy_str.strip()
+    # 如果运行在云端（如 Vercel / Linux 服务器），而代理填了本地 127.0.0.1 或 localhost，则自动转为直连
+    if os.environ.get('VERCEL') or os.environ.get('AWS_LAMBDA_FUNCTION_NAME') or os.environ.get('RENDER'):
+        if '127.0.0.1' in proxy_str or 'localhost' in proxy_str:
+            return None
+    return proxy_str
+
 # 状态常量定义
 STATUS_ACTIVE = "ACTIVE"          # 有效未被使用
 STATUS_USED = "USED"              # 已失效/已被使用
@@ -163,8 +173,8 @@ def extract_expiration_info(html_content: str) -> tuple[str, str, str]:
 
 
 class LinkChecker:
-    def __init__(self, proxy: Optional[str] = None, cookie: Optional[str] = None, timeout: int = 15):
-        self.proxy = proxy
+    def __init__(self, proxy=None, cookie=None, timeout=15):
+        self.proxy = get_effective_proxy(proxy)
         self.cookie_str = cookie or ""
         self.timeout = timeout
         self.cookies_dict = parse_cookie_string(self.cookie_str)
@@ -461,11 +471,9 @@ def check_google_cookie_validity(cookie_str: str, proxy: Optional[str] = None) -
         return False, "Cookie 为空"
 
     proxies = None
+    proxy = get_effective_proxy(proxy)
     if proxy:
-        p = proxy.strip()
-        if not (p.startswith("http://") or p.startswith("https://") or p.startswith("socks5://")):
-            p = "http://" + p
-        proxies = {"http": p, "https": p}
+        proxies = {"http": proxy, "https": proxy}
 
     test_url = "https://one.google.com/"
     cookies_dict = parse_cookie_string(cookie_str)
