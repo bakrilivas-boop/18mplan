@@ -277,6 +277,77 @@ class LinkChecker:
             duration_ms = int((time.time() - start_time) * 1000)
 
             res = self._analyze_response(raw_input, token, url, status_code, final_url, html_text, duration_ms)
+
+            # 智能降级：当 Cookie 失效（返回 NEED_AUTH）时，自动做无 Cookie 二次探测
+            if res.get("status") == STATUS_NEED_AUTH and self.cookie_str:
+                try:
+                    probe_headers = {k: v for k, v in headers.items() if k != "Cookie"}
+                    probe_resp = requests.get(url, headers=probe_headers, timeout=self.timeout,
+                                              allow_redirects=True, proxies=proxies if proxies else None)
+                    probe_status = probe_resp.status_code
+                    probe_final = str(probe_resp.url)
+                    probe_html = probe_resp.text
+                    probe_duration = int((time.time() - start_time) * 1000)
+
+                    # 如果无Cookie也返回404/410 → 链接确实已过期
+                    if probe_status in (404, 410):
+                        res = {
+                            "raw_input": raw_input, "token": token, "url": url,
+                            "status": STATUS_INVALID,
+                            "status_label": STATUS_LABELS[STATUS_INVALID]["text"],
+                            "status_badge": STATUS_LABELS[STATUS_INVALID]["badge"],
+                            "details": f"激活链接已过期或不存在 (HTTP {probe_status})",
+                            "plan_info": "无效/过期",
+                            "expire_deadline": "已过期", "remaining_time": "已过期",
+                            "plan_valid_until": "-", "duration_ms": probe_duration,
+                            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+                        }
+                    # 检查无Cookie返回的HTML中是否有失效关键词
+                    elif any(kw in probe_html for kw in ["优惠已过期", "此优惠已失效", "Offer expired", "no longer valid", "already been used", "已被使用"]):
+                        # 能直接判定失效
+                        if any(kw in probe_html for kw in ["already been used", "已被使用", "已在使用中"]):
+                            res = {
+                                "raw_input": raw_input, "token": token, "url": url,
+                                "status": STATUS_USED,
+                                "status_label": STATUS_LABELS[STATUS_USED]["text"],
+                                "status_badge": STATUS_LABELS[STATUS_USED]["badge"],
+                                "details": "订阅已在使用中 / 此链接已被兑换",
+                                "plan_info": "已失效 (已使用)",
+                                "expire_deadline": "已使用失效", "remaining_time": "已失效",
+                                "plan_valid_until": "-", "duration_ms": probe_duration,
+                                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+                            }
+                        else:
+                            res = {
+                                "raw_input": raw_input, "token": token, "url": url,
+                                "status": STATUS_INVALID,
+                                "status_label": STATUS_LABELS[STATUS_INVALID]["text"],
+                                "status_badge": STATUS_LABELS[STATUS_INVALID]["badge"],
+                                "details": "激活链接已过期或不存在",
+                                "plan_info": "无效/过期",
+                                "expire_deadline": "已过期", "remaining_time": "已过期",
+                                "plan_valid_until": "-", "duration_ms": probe_duration,
+                                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+                            }
+                    # 如果无Cookie跳转到登录页 → 链接格式正确，Google 需要登录才能查看（大概率有效）
+                    elif "accounts.google.com" in probe_final:
+                        res = {
+                            "raw_input": raw_input, "token": token, "url": url,
+                            "status": STATUS_ACTIVE,
+                            "status_label": STATUS_LABELS[STATUS_ACTIVE]["text"],
+                            "status_badge": STATUS_LABELS[STATUS_ACTIVE]["badge"],
+                            "details": "链接格式有效（服务器 Cookie 不可用，但 Google 需要登录验证，大概率可激活。建议手动打开确认）",
+                            "plan_info": "可能有效（待确认）",
+                            "expire_deadline": "待确认", "remaining_time": "待确认",
+                            "plan_valid_until": "-", "duration_ms": probe_duration,
+                            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+                        }
+                    # 其他情况保持 NEED_AUTH
+                    else:
+                        res["duration_ms"] = probe_duration
+                except Exception:
+                    pass  # 二次探测失败，保持原 NEED_AUTH 结果
+
             res["index"] = original_index
             res["token_snippet"] = snippet
             return res
