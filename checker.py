@@ -406,7 +406,7 @@ class LinkChecker:
                 "status_badge": STATUS_LABELS[STATUS_ACTIVE]["badge"],
                 "details": f"链接有效！尚未激活，可免费畅享 18 个月方案 {deadline_str}",
                 "plan_info": plan_info,
-                "expire_deadline": expire_deadline or "10月26日截止",
+                "expire_deadline": expire_deadline or "有效（截止日待确认）",
                 "remaining_time": remaining_time if remaining_time != "-" else "有效",
                 "plan_valid_until": plan_valid_until,
                 "duration_ms": duration_ms,
@@ -479,8 +479,8 @@ class LinkChecker:
                     "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
                 }
 
-        # 6. 未知返回内容（带有 Google One 特征）
-        if "one.google.com" in html or "Google One" in html:
+        # 6. 未知返回内容（带有 Google One 特征且最终URL仍在 Google 域名内）
+        if ("one.google.com" in final_url or "serviceactivation.google.com" in final_url) and ("Google One" in html or "one.google.com" in html):
             return {
                 "raw_input": raw_input,
                 "token": token,
@@ -488,7 +488,7 @@ class LinkChecker:
                 "status": STATUS_ACTIVE,
                 "status_label": STATUS_LABELS[STATUS_ACTIVE]["text"],
                 "status_badge": STATUS_LABELS[STATUS_ACTIVE]["badge"],
-                "details": "检测到 Google One 激活页面（有效）",
+                "details": "检测到 Google One 激活页面（可能有效，建议手动确认）",
                 "plan_info": "Google AI 方案",
                 "expire_deadline": expire_deadline or "-",
                 "remaining_time": remaining_time,

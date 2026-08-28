@@ -50,4 +50,4 @@ def save_config(new_config: dict) -> bool:
             return True
         except Exception:
             continue
-    return True
+    return False

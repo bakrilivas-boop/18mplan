@@ -251,7 +251,9 @@ def api_export_excel():
     results = data.get("results", [])
     filter_status = data.get("filter_status", "ALL")
 
-    if filter_status != "ALL":
+    if filter_status == "OTHER":
+        results = [r for r in results if r.get("status") not in (STATUS_ACTIVE, STATUS_USED)]
+    elif filter_status != "ALL":
         results = [r for r in results if r.get("status") == filter_status]
 
     # 按原始输入行号排序
