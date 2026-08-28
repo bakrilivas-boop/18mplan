@@ -305,21 +305,39 @@ class LinkChecker:
         """
         # 1. 判定是否被重定向到 Google 登录页
         if "accounts.google.com/ServiceLogin" in final_url or "accounts.google.com/v3/signin" in final_url:
-            return {
-                "raw_input": raw_input,
-                "token": token,
-                "url": url,
-                "status": STATUS_NEED_AUTH,
-                "status_label": STATUS_LABELS[STATUS_NEED_AUTH]["text"],
-                "status_badge": STATUS_LABELS[STATUS_NEED_AUTH]["badge"],
-                "details": "请在右上角设置中填入 Google 账号 Cookie（未登录状态无法直接解析激活权益）",
-                "plan_info": "需 Google Cookie",
-                "expire_deadline": "-",
-                "remaining_time": "-",
-                "plan_valid_until": "-",
-                "duration_ms": duration_ms,
-                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
-            }
+            # 如果已经配置了 Cookie 但仍被重定向到登录页，说明链接本身可能无效
+            if self.cookie_str and len(self.cookie_str.strip()) > 10:
+                return {
+                    "raw_input": raw_input,
+                    "token": token,
+                    "url": url,
+                    "status": STATUS_INVALID,
+                    "status_label": STATUS_LABELS[STATUS_INVALID]["text"],
+                    "status_badge": STATUS_LABELS[STATUS_INVALID]["badge"],
+                    "details": "链接无效或已过期（Cookie 已配置但 Google 仍跳转登录页，说明此链接不可用）",
+                    "plan_info": "链接无效",
+                    "expire_deadline": "已失效",
+                    "remaining_time": "已失效",
+                    "plan_valid_until": "-",
+                    "duration_ms": duration_ms,
+                    "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+                }
+            else:
+                return {
+                    "raw_input": raw_input,
+                    "token": token,
+                    "url": url,
+                    "status": STATUS_NEED_AUTH,
+                    "status_label": STATUS_LABELS[STATUS_NEED_AUTH]["text"],
+                    "status_badge": STATUS_LABELS[STATUS_NEED_AUTH]["badge"],
+                    "details": "请在右上角设置中填入 Google 账号 Cookie（未登录状态无法直接解析激活权益）",
+                    "plan_info": "需 Google Cookie",
+                    "expire_deadline": "-",
+                    "remaining_time": "-",
+                    "plan_valid_until": "-",
+                    "duration_ms": duration_ms,
+                    "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+                }
 
         # 提取时效信息
         expire_deadline, remaining_time, plan_valid_until = extract_expiration_info(html)
